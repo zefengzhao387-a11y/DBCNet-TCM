@@ -1,0 +1,51 @@
+"use client";
+
+import { LayoutGroup } from "framer-motion";
+import { useEffect } from "react";
+
+import { Atmosphere } from "@/components/background/Atmosphere";
+import { useSeasonTheme } from "@/hooks/useSeasonTheme";
+
+import { MuseumDailySeason } from "./MuseumDailySeason";
+import { MuseumCoreModules } from "./MuseumCoreModules";
+import { MuseumHero } from "./MuseumHero";
+import { MuseumNav } from "./MuseumNav";
+
+export function MuseumLanding() {
+  const { season } = useSeasonTheme();
+
+  useEffect(() => {
+    return () => {
+      const root = document.documentElement;
+      root.classList.remove(
+        "season-spring",
+        "season-summer",
+        "season-autumn",
+        "season-winter",
+      );
+      delete root.dataset.season;
+    };
+  }, []);
+
+  return (
+    <div className="museum-ambient museum-airy relative min-h-screen text-stone-800">
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-x-hidden overflow-y-hidden">
+        <Atmosphere season={season} />
+      </div>
+
+      <LayoutGroup id="dbcnet-museum-landing">
+        <main
+          id="museum-home"
+          className="relative z-10 mx-auto flex w-full max-w-[min(100vw,120rem)] flex-col [text-rendering:optimizeLegibility]"
+        >
+          <MuseumNav />
+          <section id="hero" className="relative scroll-mt-28">
+            <MuseumHero />
+          </section>
+          <MuseumDailySeason />
+          <MuseumCoreModules />
+        </main>
+      </LayoutGroup>
+    </div>
+  );
+}

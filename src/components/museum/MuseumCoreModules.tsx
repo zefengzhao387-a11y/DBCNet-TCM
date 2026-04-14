@@ -1,0 +1,114 @@
+"use client";
+
+import { LayoutGroup, motion } from "framer-motion";
+import { BookOpen, BrainCircuit, Lock, Salad } from "lucide-react";
+
+import { MuseumMotionSection } from "./MuseumMotionSection";
+
+const modules = [
+  {
+    title: "智能问诊",
+    desc: "双分支 AI 协同 · 辨证与证据链并行呈现（示意）",
+    icon: BrainCircuit,
+    offset: "md:translate-x-3 md:-rotate-[0.5deg]",
+  },
+  {
+    title: "膳食推荐",
+    desc: "节气与体质双约束的东方食养编排（示意）",
+    icon: Salad,
+    offset: "md:-translate-x-4 md:translate-y-3 md:rotate-[0.5deg]",
+  },
+  {
+    title: "中医百科",
+    desc: "典籍、方药与现代研究的可视化索引（示意）",
+    icon: BookOpen,
+    offset: "md:translate-x-8 md:-translate-y-1 md:rotate-[0.35deg]",
+  },
+  {
+    title: "数字病历锁",
+    desc: "隐私优先的病历沙盒与授权时间窗（示意）",
+    icon: Lock,
+    offset: "md:-translate-x-2 md:translate-y-4 md:-rotate-[0.35deg]",
+  },
+] as const;
+
+const listVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.08, delayChildren: 0.04 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
+
+export function MuseumCoreModules() {
+  return (
+    <MuseumMotionSection
+      id="modules"
+      className="relative z-10 px-6 pb-32 pt-10 sm:px-12 sm:pb-40 sm:pt-14 lg:px-20"
+    >
+      <div className="mx-auto max-w-6xl">
+        <div className="inline-flex items-center gap-2 rounded-full border border-stone-200/80 bg-white/60 px-3.5 py-1.5 shadow-sm backdrop-blur-sm">
+          <span className="h-1 w-1 rounded-full bg-[color-mix(in_srgb,var(--season-accent)_55%,#6b7c6e)] opacity-70" />
+          <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.28em] text-stone-400">
+            Core Modules
+          </p>
+        </div>
+        <h2 className="museum-cn-title mt-6 max-w-2xl text-[clamp(1.6rem,3.6vw,2.35rem)] leading-snug text-stone-800">
+          核心模块矩阵
+        </h2>
+        <p className="mt-5 max-w-xl font-sans text-[14.5px] font-light leading-[1.8] text-stone-500">
+          非对称展陈，如博古架上的器物错落；悬停时轻托起浮，光沿边缘徐徐流动。
+        </p>
+
+        <LayoutGroup id="museum-core-cards">
+          <motion.div
+            className="relative mt-20 space-y-10 md:space-y-14"
+            variants={listVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.12 }}
+          >
+            {modules.map((m) => (
+              <motion.div
+                key={m.title}
+                layout="position"
+                variants={cardVariants}
+                className={`museum-glass-card group flex flex-col gap-5 p-7 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:p-9 ${m.offset}`}
+                whileHover={{
+                  y: -4,
+                  transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },
+                }}
+              >
+                <div className="relative z-[1] max-w-lg space-y-3">
+                  <h3 className="font-serif text-[clamp(1.1rem,2.1vw,1.4rem)] font-medium tracking-[0.12em] text-stone-800">
+                    {m.title}
+                  </h3>
+                  <p className="font-sans text-[13.5px] font-light leading-[1.75] text-stone-500">
+                    {m.desc}
+                  </p>
+                </div>
+                <div className="relative z-[1] flex shrink-0 items-center justify-center">
+                  <div className="flex size-14 items-center justify-center rounded-2xl border border-stone-200/70 bg-white/50 shadow-sm sm:size-16">
+                    <m.icon
+                      className="size-6 text-stone-300 transition duration-500 group-hover:scale-[1.04] group-hover:text-[color-mix(in_srgb,var(--season-accent)_45%,#647066)] sm:size-7"
+                      strokeWidth={1.15}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </LayoutGroup>
+      </div>
+    </MuseumMotionSection>
+  );
+}
