@@ -16,14 +16,15 @@ export function MuseumNav({ className }: { className?: string }) {
   return (
     <header
       className={cn(
-        "museum-glass-nav fixed left-1/2 z-[60] flex w-[min(48rem,calc(100dvw_-_1.25rem_-_env(safe-area-inset-left,0px)_-_env(safe-area-inset-right,0px)))] -translate-x-1/2 flex-col gap-3 rounded-2xl px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:rounded-full sm:px-6 sm:py-2.5",
-        "top-[max(0.75rem,env(safe-area-inset-top,0px))] sm:top-[max(1.5rem,env(safe-area-inset-top,0px))]",
+        "museum-glass-nav fixed left-1/2 z-[60] flex -translate-x-1/2 items-center justify-center rounded-full px-5 py-2.5",
+        "top-[max(0.75rem,env(safe-area-inset-top,0px))] w-[min(13.5rem,calc(100dvw_-_2rem_-_env(safe-area-inset-left,0px)_-_env(safe-area-inset-right,0px)))] max-lg:shadow-[0_12px_40px_rgba(42,50,44,0.07)]",
+        "lg:top-[max(1.5rem,env(safe-area-inset-top,0px))] lg:w-[min(48rem,calc(100dvw_-_1.25rem_-_env(safe-area-inset-left,0px)_-_env(safe-area-inset-right,0px)))] lg:justify-between lg:gap-4 lg:rounded-full lg:px-6 lg:py-2.5",
         className,
       )}
     >
       <Link
         href="#hero"
-        className="group flex shrink-0 items-baseline gap-0.5 self-start font-serif text-[13px] font-medium tracking-[0.12em] text-stone-800 transition hover:text-stone-950 sm:self-auto"
+        className="group flex shrink-0 items-baseline gap-0.5 font-serif text-[13px] font-medium tracking-[0.12em] text-stone-800 transition hover:text-stone-950"
       >
         <span>DBCNet</span>
         <span className="text-[10px] text-stone-300 transition group-hover:text-stone-400">
@@ -35,7 +36,7 @@ export function MuseumNav({ className }: { className?: string }) {
       </Link>
       <nav
         aria-label="博物馆主导航"
-        className="scrollbar-hide -mx-1 flex min-h-[44px] min-w-0 flex-nowrap items-center gap-1 overflow-x-auto px-1 pb-0.5 font-sans text-[12.5px] font-medium tracking-[0.04em] text-stone-500 sm:mx-0 sm:min-h-0 sm:justify-end sm:gap-1 sm:overflow-visible sm:px-0 sm:pb-0 sm:text-[13px]"
+        className="scrollbar-hide hidden min-h-[44px] min-w-0 flex-nowrap items-center gap-1 font-sans text-[12.5px] font-medium tracking-[0.04em] text-stone-500 lg:flex lg:justify-end lg:text-[13px]"
       >
         {links.map(({ href, label, emphasis }) =>
           href.startsWith("/") ? (

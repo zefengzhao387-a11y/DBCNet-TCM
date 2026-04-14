@@ -53,7 +53,7 @@ export function MuseumCoreModules() {
   return (
     <MuseumMotionSection
       id="modules"
-      className="relative z-10 scroll-mt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))] pb-32 pt-10 sm:pb-40 sm:pt-14"
+      className="relative z-10 scroll-mt-[max(4.75rem,calc(env(safe-area-inset-top,0px)+3.5rem))] pb-32 pt-10 sm:pb-40 sm:pt-14 lg:scroll-mt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))]"
     >
       <div className="mx-auto max-w-6xl min-w-0">
         <div className="inline-flex items-center gap-2 rounded-full border border-stone-200/80 bg-white/60 px-3.5 py-1.5 shadow-sm backdrop-blur-sm">

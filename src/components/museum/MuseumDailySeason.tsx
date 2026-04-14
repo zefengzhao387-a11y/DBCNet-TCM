@@ -34,7 +34,7 @@ export function MuseumDailySeason() {
   return (
     <section
       id="daily-season"
-      className="relative z-10 scroll-mt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))] pb-20 pt-12 sm:pb-24 sm:pt-16"
+      className="relative z-10 scroll-mt-[max(4.75rem,calc(env(safe-area-inset-top,0px)+3.5rem))] pb-20 pt-12 sm:pb-24 sm:pt-16 lg:scroll-mt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))]"
     >
       <div className="relative mx-auto max-w-6xl">
         <motion.div
@@ -42,30 +42,35 @@ export function MuseumDailySeason() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4"
+          className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between lg:gap-6"
         >
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-sans text-[12px] text-stone-500 sm:text-[13px]">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200/80 bg-white/70 px-3 py-1 shadow-sm">
-              <CalendarDays className="size-3.5 text-stone-400" aria-hidden />
-              <span className="text-stone-600">{formatZhCalendar(now)}</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200/80 bg-white/70 px-3 py-1 shadow-sm">
-              <Sparkles className="size-3.5 text-[color-mix(in_srgb,var(--season-accent)_45%,#78716c)]" aria-hidden />
-              节气（公历近似）· <strong className="font-medium text-stone-700">{solar}</strong>
-            </span>
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.28em] text-stone-400 lg:hidden">
+              Rhythm · 时令场域
+            </p>
+            <div className="scrollbar-hide -mx-1 flex max-w-full flex-nowrap items-center gap-2 overflow-x-auto px-1 pb-0.5 font-sans text-[12px] text-stone-500 sm:text-[13px] lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0 lg:pb-0">
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-stone-200/80 bg-white/70 px-3 py-1.5 shadow-sm sm:py-1">
+                <CalendarDays className="size-3.5 text-stone-400" aria-hidden />
+                <span className="text-stone-600">{formatZhCalendar(now)}</span>
+              </span>
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-stone-200/80 bg-white/70 px-3 py-1.5 shadow-sm sm:py-1">
+                <Sparkles className="size-3.5 text-[color-mix(in_srgb,var(--season-accent)_45%,#78716c)]" aria-hidden />
+                节气（公历近似）· <strong className="font-medium text-stone-700">{solar}</strong>
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col items-start gap-1.5 sm:items-end">
+          <div className="flex min-w-0 flex-col items-start gap-1.5 lg:max-w-sm lg:items-end">
             <p className="font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-stone-400">
               四时 · 界面主题
             </p>
-            <p className="text-right font-serif text-[15px] font-medium tracking-[0.06em] text-stone-800">
+            <p className="text-left font-serif text-[15px] font-medium tracking-[0.06em] text-stone-800 lg:text-right">
               当前为 <strong className="text-[color-mix(in_srgb,var(--season-accent)_55%,#44403c)]">{seasonZh}</strong>
               季 · {label}
             </p>
-            <p className="max-w-md text-right font-sans text-[12px] leading-relaxed text-stone-500 sm:text-[12.5px]">
+            <p className="max-w-md text-left font-sans text-[12px] leading-relaxed text-stone-500 sm:text-[12.5px] lg:text-right">
               主题皮肤：<span className="font-medium text-stone-700">{themeSkinLabel}</span>
             </p>
-            <p className="max-w-md text-right font-sans text-[11px] leading-relaxed text-stone-400">
+            <p className="max-w-md text-left font-sans text-[11px] leading-relaxed text-stone-400 lg:text-right">
               {calendarSeasonHint}
             </p>
           </div>

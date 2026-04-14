@@ -40,7 +40,7 @@ export function MuseumHero() {
   const { label } = useSeasonTheme();
 
   return (
-    <div className="relative z-10 flex min-h-[min(100dvh,900px)] flex-col items-center justify-center pb-[max(6.5rem,env(safe-area-inset-bottom,0px)+4.5rem)] pt-[max(9.5rem,calc(env(safe-area-inset-top,0px)+6.25rem))] text-center sm:min-h-[min(100dvh,880px)] sm:pb-32 sm:pt-40">
+    <div className="relative z-10 flex min-h-[min(100dvh,880px)] flex-col items-center justify-center pb-12 pt-[max(7.25rem,calc(env(safe-area-inset-top,0px)+4.85rem))] text-center sm:min-h-[min(100dvh,880px)] sm:pb-20 sm:pt-[max(9.5rem,calc(env(safe-area-inset-top,0px)+6.25rem))] lg:pb-32 lg:pt-40">
       <motion.p
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -71,6 +71,9 @@ export function MuseumHero() {
           </p>
           <p className="mt-6 font-serif text-[clamp(1.35rem,3.4vw,2.1rem)] font-normal leading-snug tracking-[0.2em] text-stone-600">
             数字中医
+          </p>
+          <p className="mt-3 font-display text-[clamp(0.62rem,1.65vw,0.78rem)] font-medium uppercase tracking-[0.38em] text-stone-400/95">
+            Clinical Intelligence Museum
           </p>
         </motion.div>
         <TitleSeal />

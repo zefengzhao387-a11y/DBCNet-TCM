@@ -54,6 +54,12 @@
     scroll-padding-top: max(5.5rem, env(safe-area-inset-top, 0px));
   }
 
+  @media (max-width: 1023px) {
+    html {
+      scroll-padding-top: max(4.25rem, env(safe-area-inset-top, 0px));
+    }
+  }
+
   html.season-spring {
     --morandi-sky-top: #e3ead3;
     --morandi-sky-bottom: #121614;
