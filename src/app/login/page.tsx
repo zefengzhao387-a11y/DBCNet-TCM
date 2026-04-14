@@ -61,7 +61,7 @@ export default function LoginPage() {
       initial={{ opacity: 0, y: 12, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-      className="glass-panel w-full max-w-[400px] rounded-3xl border p-8 shadow-lg"
+      className="glass-panel mx-auto w-full max-w-[min(28rem,calc(100vw-1.5rem))] rounded-3xl border p-6 shadow-lg sm:p-8"
     >
       <div className="mb-8 space-y-1 text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">

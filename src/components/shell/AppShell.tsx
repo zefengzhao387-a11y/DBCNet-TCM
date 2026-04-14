@@ -22,8 +22,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       className={cn(
         "relative z-0 flex w-full",
         isMuseumHome && "min-h-screen overflow-x-hidden overflow-y-auto",
-        isLogin && "h-screen overflow-hidden p-3 sm:p-4",
-        shellPadding && "h-screen overflow-hidden p-3 sm:p-4",
+        isLogin && "h-[100dvh] max-h-[100dvh] overflow-hidden app-safe-padding",
+        shellPadding &&
+          "h-[100dvh] max-h-[100dvh] overflow-hidden app-safe-padding sm:gap-1",
       )}
     >
       {!isMuseumHome ? (
@@ -66,12 +67,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-10 flex h-full min-h-0 w-full min-w-0 gap-0 overflow-hidden"
+            className="relative z-10 flex h-full min-h-0 w-full min-w-0 gap-0 overflow-hidden lg:gap-3"
           >
             <Sidebar />
-            <div className="relative z-10 flex min-w-0 flex-1 flex-col gap-3">
+            <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col gap-2 sm:gap-3">
               <Topbar />
-              <main className="main-canvas-inner min-h-0 flex-1 overflow-hidden p-4 sm:p-6">
+              <main className="main-canvas-inner min-h-0 flex-1 overflow-hidden p-3 sm:p-5 lg:p-6">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={pathname}
@@ -86,7 +87,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </AnimatePresence>
               </main>
             </div>
-            <XaiPanel />
+            <div className="relative z-10 h-full w-0 min-w-0 shrink-0 overflow-visible lg:overflow-hidden">
+              <XaiPanel />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

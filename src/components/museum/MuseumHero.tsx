@@ -40,7 +40,7 @@ export function MuseumHero() {
   const { label } = useSeasonTheme();
 
   return (
-    <div className="relative z-10 flex min-h-[min(100dvh,880px)] flex-col items-center justify-center px-6 pb-28 pt-36 text-center sm:px-12 sm:pb-32 sm:pt-40">
+    <div className="relative z-10 flex min-h-[min(100dvh,900px)] flex-col items-center justify-center pb-[max(6.5rem,env(safe-area-inset-bottom,0px)+4.5rem)] pt-[max(9.5rem,calc(env(safe-area-inset-top,0px)+6.25rem))] text-center sm:min-h-[min(100dvh,880px)] sm:pb-32 sm:pt-40">
       <motion.p
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -89,12 +89,12 @@ export function MuseumHero() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.32, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="mt-14 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-4"
+        className="mt-14 flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-4"
       >
         <Button
           asChild
           size="lg"
-          className="h-12 min-w-[11.5rem] rounded-full border border-[color-mix(in_srgb,var(--season-accent)_28%,transparent)] bg-[color-mix(in_srgb,var(--season-accent)_14%,white)] px-9 text-[13.5px] font-medium tracking-wide text-stone-800 shadow-sm transition duration-300 hover:bg-[color-mix(in_srgb,var(--season-accent)_22%,white)] active:scale-[0.99]"
+          className="h-12 min-h-[48px] w-full rounded-full border border-[color-mix(in_srgb,var(--season-accent)_28%,transparent)] bg-[color-mix(in_srgb,var(--season-accent)_14%,white)] px-9 text-[13.5px] font-medium tracking-wide text-stone-800 shadow-sm transition duration-300 hover:bg-[color-mix(in_srgb,var(--season-accent)_22%,white)] active:scale-[0.99] sm:w-auto sm:min-w-[11.5rem]"
         >
           <Link href="/login">开始智能问诊</Link>
         </Button>
@@ -102,7 +102,7 @@ export function MuseumHero() {
           asChild
           size="lg"
           variant="outline"
-          className="h-12 min-w-[11.5rem] rounded-full border border-stone-200/90 bg-white/50 px-9 text-[13.5px] font-medium tracking-wide text-stone-600 shadow-sm backdrop-blur-sm transition duration-300 hover:border-stone-300 hover:bg-white/80 hover:text-stone-800 active:scale-[0.99]"
+          className="h-12 min-h-[48px] w-full rounded-full border border-stone-200/90 bg-white/50 px-9 text-[13.5px] font-medium tracking-wide text-stone-600 shadow-sm backdrop-blur-sm transition duration-300 hover:border-stone-300 hover:bg-white/80 hover:text-stone-800 active:scale-[0.99] sm:w-auto sm:min-w-[11.5rem]"
         >
           <Link href="#modules">浏览核心模块</Link>
         </Button>

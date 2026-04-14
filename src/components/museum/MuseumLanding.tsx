@@ -36,10 +36,13 @@ export function MuseumLanding() {
       <LayoutGroup id="dbcnet-museum-landing">
         <main
           id="museum-home"
-          className="relative z-10 mx-auto flex w-full max-w-[min(100vw,120rem)] flex-col [text-rendering:optimizeLegibility]"
+          className="relative z-10 mx-auto flex w-full max-w-[min(100dvw,120rem)] flex-col museum-gutter-x [text-rendering:optimizeLegibility]"
         >
           <MuseumNav />
-          <section id="hero" className="relative scroll-mt-28">
+          <section
+            id="hero"
+            className="relative scroll-mt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))]"
+          >
             <MuseumHero />
           </section>
           <MuseumDailySeason />

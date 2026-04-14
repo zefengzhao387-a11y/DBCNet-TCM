@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cinzel, Noto_Serif_SC } from "next/font/google";
 import localFont from "next/font/local";
 
@@ -36,6 +36,16 @@ const notoSerifSC = Noto_Serif_SC({
 export const metadata: Metadata = {
   title: "DBCNet-TCM · 中医智能决策支持",
   description: "Modern Neo-Chinese clinical intelligence workstation",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4faf3" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e1018" },
+  ],
 };
 
 export default function RootLayout({

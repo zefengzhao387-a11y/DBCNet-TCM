@@ -53,9 +53,9 @@ export function MuseumCoreModules() {
   return (
     <MuseumMotionSection
       id="modules"
-      className="relative z-10 px-6 pb-32 pt-10 sm:px-12 sm:pb-40 sm:pt-14 lg:px-20"
+      className="relative z-10 scroll-mt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))] pb-32 pt-10 sm:pb-40 sm:pt-14"
     >
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-6xl min-w-0">
         <div className="inline-flex items-center gap-2 rounded-full border border-stone-200/80 bg-white/60 px-3.5 py-1.5 shadow-sm backdrop-blur-sm">
           <span className="h-1 w-1 rounded-full bg-[color-mix(in_srgb,var(--season-accent)_55%,#6b7c6e)] opacity-70" />
           <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.28em] text-stone-400">
@@ -82,7 +82,7 @@ export function MuseumCoreModules() {
                 key={m.title}
                 layout="position"
                 variants={cardVariants}
-                className={`museum-glass-card group flex flex-col gap-5 p-7 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:p-9 ${m.offset}`}
+                className={`museum-glass-card group flex min-w-0 flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:p-9 ${m.offset}`}
                 whileHover={{
                   y: -4,
                   transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },

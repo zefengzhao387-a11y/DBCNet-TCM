@@ -50,6 +50,10 @@
     --morandi-sky-bottom: #121614;
   }
 
+  html {
+    scroll-padding-top: max(5.5rem, env(safe-area-inset-top, 0px));
+  }
+
   html.season-spring {
     --morandi-sky-top: #e3ead3;
     --morandi-sky-bottom: #121614;
@@ -203,7 +207,7 @@
   }
 
   .main-canvas-inner {
-    @apply relative rounded-3xl border-0;
+    @apply relative rounded-2xl border-0 sm:rounded-3xl;
     background: linear-gradient(
         180deg,
         color-mix(in srgb, var(--card) 88%, transparent),
@@ -213,6 +217,14 @@
     box-shadow:
       inset 0 1px 1px rgba(255, 255, 255, 0.05),
       0 12px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  @media (max-width: 639px) {
+    .main-canvas-inner {
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.05),
+        0 8px 28px rgba(0, 0, 0, 0.06);
+    }
   }
 
   .xai-drawer-shell {
@@ -367,5 +379,53 @@
   /** 中文展陈标题：衬线 + 疏朗字距（清新不过挤） */
   .museum-cn-title {
     @apply font-serif font-medium tracking-[0.16em];
+  }
+
+  /**
+   * 博物馆页水平留白：刘海屏安全区 + 与 sm/lg 断点协调的侧栏距
+   */
+  .museum-gutter-x {
+    padding-left: max(1.25rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.25rem, env(safe-area-inset-right, 0px));
+  }
+
+  @media (min-width: 640px) {
+    .museum-gutter-x {
+      padding-left: max(2rem, env(safe-area-inset-left, 0px));
+      padding-right: max(2rem, env(safe-area-inset-right, 0px));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .museum-gutter-x {
+      padding-left: max(2.5rem, env(safe-area-inset-left, 0px));
+      padding-right: max(2.5rem, env(safe-area-inset-right, 0px));
+    }
+  }
+
+  /** 工作台：安全区内边距（与 AppShell 叠加使用） */
+  .app-safe-padding {
+    padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+    padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+    padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+  }
+
+  @media (min-width: 640px) {
+    .app-safe-padding {
+      padding-top: max(1rem, env(safe-area-inset-top, 0px));
+      padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+      padding-left: max(1rem, env(safe-area-inset-left, 0px));
+      padding-right: max(1rem, env(safe-area-inset-right, 0px));
+    }
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

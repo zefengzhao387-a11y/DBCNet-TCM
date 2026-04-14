@@ -34,7 +34,7 @@ export function MuseumDailySeason() {
   return (
     <section
       id="daily-season"
-      className="relative z-10 scroll-mt-28 px-6 pb-20 pt-12 sm:px-12 sm:pb-24 sm:pt-16 lg:px-20"
+      className="relative z-10 scroll-mt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))] pb-20 pt-12 sm:pb-24 sm:pt-16"
     >
       <div className="relative mx-auto max-w-6xl">
         <motion.div
@@ -71,16 +71,16 @@ export function MuseumDailySeason() {
           </div>
         </motion.div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid min-w-0 gap-6 lg:grid-cols-2">
           <motion.article
             initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.78, delay: 0.04, ease: [0.16, 1, 0.3, 1] }}
-            className="museum-glass-card relative p-7 sm:p-8"
+            className="museum-glass-card relative min-w-0 p-6 sm:p-8"
           >
-            <div className="mb-5 flex items-center gap-2 border-b border-stone-200/60 pb-4">
-              <BookMarked className="size-4 text-[color-mix(in_srgb,var(--season-accent)_48%,#78716c)]" aria-hidden />
+            <div className="mb-5 flex min-w-0 items-center gap-2 border-b border-stone-200/60 pb-4">
+              <BookMarked className="size-4 shrink-0 text-[color-mix(in_srgb,var(--season-accent)_48%,#78716c)]" aria-hidden />
               <h2 className="font-serif text-lg font-medium tracking-[0.12em] text-stone-800">
                 每日一词
               </h2>
@@ -101,10 +101,10 @@ export function MuseumDailySeason() {
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.78, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="museum-glass-card relative p-7 sm:p-8"
+            className="museum-glass-card relative min-w-0 p-6 sm:p-8"
           >
-            <div className="mb-5 flex items-center gap-2 border-b border-stone-200/60 pb-4">
-              <Leaf className="size-4 text-[color-mix(in_srgb,var(--season-accent)_48%,#78716c)]" aria-hidden />
+            <div className="mb-5 flex min-w-0 items-center gap-2 border-b border-stone-200/60 pb-4">
+              <Leaf className="size-4 shrink-0 text-[color-mix(in_srgb,var(--season-accent)_48%,#78716c)]" aria-hidden />
               <h2 className="font-serif text-lg font-medium tracking-[0.12em] text-stone-800">
                 时令养生
               </h2>
