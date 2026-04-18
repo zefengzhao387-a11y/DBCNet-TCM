@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "#hero", label: "首页", emphasis: false },
   { href: "#daily-season", label: "时令", emphasis: false },
-  { href: "/login", label: "智能问诊", emphasis: false },
-  { href: "#modules", label: "百科", emphasis: false },
+  { href: "/clinical", label: "临床决策", emphasis: false },
+  { href: "/constitution", label: "体质辨识", emphasis: false },
+  { href: "/knowledge", label: "知识库", emphasis: false },
   { href: "/login", label: "登录", emphasis: true },
 ] as const;
 
@@ -26,12 +27,12 @@ export function MuseumNav({ className }: { className?: string }) {
         href="#hero"
         className="group flex shrink-0 items-baseline gap-0.5 font-serif text-[13px] font-medium tracking-[0.12em] text-stone-800 transition hover:text-stone-950"
       >
-        <span>DBCNet</span>
+        <span>黄岐智鉴</span>
         <span className="text-[10px] text-stone-300 transition group-hover:text-stone-400">
           ·
         </span>
         <span className="text-[11px] tracking-[0.18em] text-stone-500 transition group-hover:text-stone-600">
-          TCM
+          DBCNet
         </span>
       </Link>
       <nav
@@ -45,7 +46,7 @@ export function MuseumNav({ className }: { className?: string }) {
               href={href}
               className={cn(
                 "inline-flex shrink-0 touch-manipulation items-center justify-center rounded-full px-3.5 py-2.5 transition duration-200 sm:py-1.5",
-                label === "智能问诊" ? "hidden xs:inline-flex" : null,
+                label === "临床决策" ? "hidden xs:inline-flex" : null,
                 emphasis
                   ? "bg-stone-800/90 text-white shadow-sm hover:bg-stone-800"
                   : "text-stone-500 hover:bg-stone-100/80 hover:text-stone-800",

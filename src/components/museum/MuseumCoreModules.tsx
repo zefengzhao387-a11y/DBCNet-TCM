@@ -1,21 +1,21 @@
 "use client";
 
 import { LayoutGroup, motion } from "framer-motion";
-import { BookOpen, BrainCircuit, Lock, Salad } from "lucide-react";
+import { BookOpen, BrainCircuit, Camera, Lock } from "lucide-react";
 
 import { MuseumMotionSection } from "./MuseumMotionSection";
 
 const modules = [
   {
-    title: "智能问诊",
-    desc: "双分支 AI 协同 · 辨证与证据链并行呈现（示意）",
+    title: "辨证决策台",
+    desc: "对接推理接口：语义向量经 LLM 分支与知识图谱分支，在门控融合头输出证候文本；侧栏「逻辑链」承载可解释图谱（示意）。",
     icon: BrainCircuit,
     offset: "md:translate-x-3 md:-rotate-[0.5deg]",
   },
   {
-    title: "膳食推荐",
-    desc: "节气与体质双约束的东方食养编排（示意）",
-    icon: Salad,
+    title: "体质自测（舌象 + 问卷）",
+    desc: "多模态采集舌象与量表答案，体质判别与风险提示；交互可对齐行业舌诊页式流程（示意）。",
+    icon: Camera,
     offset: "md:-translate-x-4 md:translate-y-3 md:rotate-[0.5deg]",
   },
   {

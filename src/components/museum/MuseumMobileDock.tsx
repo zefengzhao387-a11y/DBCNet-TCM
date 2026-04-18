@@ -9,7 +9,7 @@ const dock = [
   { href: "#hero", label: "首页", Icon: Home },
   { href: "#daily-season", label: "时令", Icon: CalendarDays },
   { href: "#modules", label: "模块", Icon: BookOpen },
-  { href: "/login", label: "问诊", Icon: Stethoscope },
+  { href: "/clinical", label: "临床", Icon: Stethoscope },
 ] as const;
 
 /**

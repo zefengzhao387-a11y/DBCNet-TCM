@@ -28,8 +28,8 @@ function TitleSeal() {
           ease: "easeInOut",
         }}
       >
-        <span className="select-none font-serif text-[8.5px] font-medium leading-[1.5] tracking-[0.1em] text-white/95 [writing-mode:vertical-rl]">
-          DBCNet
+        <span className="select-none font-serif text-[7.5px] font-medium leading-[1.45] tracking-[0.08em] text-white/95 [writing-mode:vertical-rl]">
+          黄岐智鉴
         </span>
       </motion.div>
     </motion.div>
@@ -47,7 +47,7 @@ export function MuseumHero() {
         transition={{ delay: 0.02, duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
         className="mb-9 max-w-lg font-sans text-[10px] font-medium uppercase leading-relaxed tracking-[0.28em] text-stone-500"
       >
-        数字中医文化与决策博物馆
+        多模态辨证 · 舌象与问卷体质自测
         <span className="mx-2 text-stone-300">·</span>
         <span className="text-stone-400">{label}</span>
       </motion.p>
@@ -65,15 +65,13 @@ export function MuseumHero() {
           className="max-w-[min(92vw,38rem)] text-center sm:text-left"
         >
           <p className="font-serif text-[clamp(1.85rem,5vw,3.1rem)] font-medium leading-[1.15] tracking-[0.14em] text-stone-800">
-            DBCNet
-            <span className="text-stone-300">-</span>
-            TCM
+            黄岐智鉴
           </p>
           <p className="mt-6 font-serif text-[clamp(1.35rem,3.4vw,2.1rem)] font-normal leading-snug tracking-[0.2em] text-stone-600">
-            数字中医
+            双分支辨证与可解释图谱
           </p>
           <p className="mt-3 font-display text-[clamp(0.62rem,1.65vw,0.78rem)] font-medium uppercase tracking-[0.38em] text-stone-400/95">
-            Clinical Intelligence Museum
+            DBCNet · Multimodal TCM
           </p>
         </motion.div>
         <TitleSeal />
@@ -99,7 +97,7 @@ export function MuseumHero() {
           size="lg"
           className="h-12 min-h-[48px] w-full rounded-full border border-[color-mix(in_srgb,var(--season-accent)_28%,transparent)] bg-[color-mix(in_srgb,var(--season-accent)_14%,white)] px-9 text-[13.5px] font-medium tracking-wide text-stone-800 shadow-sm transition duration-300 hover:bg-[color-mix(in_srgb,var(--season-accent)_22%,white)] active:scale-[0.99] sm:w-auto sm:min-w-[11.5rem]"
         >
-          <Link href="/login">开始智能问诊</Link>
+          <Link href="/clinical">进入临床决策支持</Link>
         </Button>
         <Button
           asChild

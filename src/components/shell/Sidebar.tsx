@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookOpen, PanelLeft, Stethoscope, UserRound, UtensilsCrossed } from "lucide-react";
+import { BookOpen, Camera, PanelLeft, Stethoscope, UserRound } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -9,12 +11,13 @@ import { useAuthStore } from "@/stores/auth-store";
 import { useUIStore } from "@/stores/ui-store";
 
 const nav = [
-  { icon: Stethoscope, label: "问诊" },
-  { icon: UtensilsCrossed, label: "膳食" },
-  { icon: BookOpen, label: "百科" },
+  { href: "/clinical", icon: Stethoscope, label: "临床决策" },
+  { href: "/constitution", icon: Camera, label: "体质辨识" },
+  { href: "/knowledge", icon: BookOpen, label: "知识库" },
 ] as const;
 
 export function Sidebar() {
+  const pathname = usePathname();
   const expanded = useUIStore((s) => s.sidebarExpanded);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const user = useAuthStore((s) => s.user);
@@ -52,7 +55,7 @@ export function Sidebar() {
               transition={{ duration: 0.28, ease: "easeOut" }}
               className="min-w-0 truncate text-sm font-semibold tracking-tight text-foreground"
             >
-              DBCNet
+              黄岐智鉴
             </motion.span>
           ) : null}
           <Button
@@ -68,30 +71,37 @@ export function Sidebar() {
         </div>
 
         <nav className="flex flex-1 flex-col gap-1" aria-label="主导航">
-          {nav.map(({ icon: Icon, label }) => (
-            <Button
-              key={label}
-              type="button"
-              variant="ghost"
-              className={cn(
-                "h-12 min-h-12 justify-start gap-3 rounded-2xl px-2 text-muted-foreground hover:text-foreground sm:h-11 sm:min-h-0",
-                !expanded && "justify-center gap-0 px-0",
-              )}
-              title={label}
-            >
-              <Icon className="size-[1.125rem] shrink-0 text-season-accent" />
-              {expanded ? (
-                <motion.span
-                  initial={{ opacity: 0, x: -4 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-                  className="truncate text-sm font-medium"
-                >
-                  {label}
-                </motion.span>
-              ) : null}
-            </Button>
-          ))}
+          {nav.map(({ href, icon: Icon, label }) => {
+            const active =
+              pathname === href || pathname.startsWith(`${href}/`);
+            return (
+              <Button
+                key={href}
+                asChild
+                variant="ghost"
+                className={cn(
+                  "h-12 min-h-12 justify-start gap-3 rounded-2xl px-2 text-muted-foreground hover:text-foreground sm:h-11 sm:min-h-0",
+                  !expanded && "justify-center gap-0 px-0",
+                  active && "bg-[var(--sidebar-tint)] text-foreground",
+                )}
+                title={label}
+              >
+                <Link href={href} className="flex w-full min-w-0 items-center gap-3">
+                  <Icon className="size-[1.125rem] shrink-0 text-season-accent" />
+                  {expanded ? (
+                    <motion.span
+                      initial={{ opacity: 0, x: -4 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+                      className="truncate text-sm font-medium"
+                    >
+                      {label}
+                    </motion.span>
+                  ) : null}
+                </Link>
+              </Button>
+            );
+          })}
         </nav>
 
         {expanded && user ? (
