@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { LogOut, Network, Search } from "lucide-react";
+import { Home, LogOut, Network, Search } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -43,11 +44,24 @@ export function Topbar() {
       layout
       className="glass-topbar flex min-w-0 shrink-0 flex-wrap items-center gap-x-2 gap-y-2.5 px-3 py-2.5 sm:gap-x-3 sm:gap-y-2 sm:px-4 sm:py-3"
     >
-      <div className="flex min-w-0 flex-1 basis-[min(100%,18rem)] flex-col gap-0.5 sm:basis-auto sm:flex-row sm:items-baseline sm:gap-3">
-        <p className="truncate text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground sm:text-xs">
-          {label}
-        </p>
-        <p className="truncate text-[13px] font-medium text-foreground sm:text-sm">{now}</p>
+      <div className="flex min-w-0 flex-1 basis-[min(100%,18rem)] items-start gap-2 sm:basis-auto sm:items-center sm:gap-3">
+        <Button
+          asChild
+          variant="outline"
+          size="icon"
+          className="size-11 shrink-0 rounded-xl border-border/70 bg-background/40 sm:size-10"
+          title="返回展厅首页"
+        >
+          <Link href="/" aria-label="返回展厅首页">
+            <Home className="size-[1.125rem] text-season-accent" />
+          </Link>
+        </Button>
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-3">
+          <p className="truncate text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground sm:text-xs">
+            {label}
+          </p>
+          <p className="truncate text-[13px] font-medium text-foreground sm:text-sm">{now}</p>
+        </div>
       </div>
 
       <div className="relative hidden min-h-10 min-w-0 flex-1 basis-0 md:block md:max-w-md lg:max-w-xl">

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookOpen, Camera, PanelLeft, Stethoscope, UserRound } from "lucide-react";
+import { BookOpen, Camera, Home, PanelLeft, Stethoscope, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,6 +11,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { useUIStore } from "@/stores/ui-store";
 
 const nav = [
+  { href: "/", icon: Home, label: "展厅首页" },
   { href: "/clinical", icon: Stethoscope, label: "临床决策" },
   { href: "/constitution", icon: Camera, label: "体质辨识" },
   { href: "/knowledge", icon: BookOpen, label: "知识库" },
@@ -49,14 +50,20 @@ export function Sidebar() {
           )}
         >
           {expanded ? (
-            <motion.span
+            <motion.div
               initial={{ opacity: 0, x: -6 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.28, ease: "easeOut" }}
-              className="min-w-0 truncate text-sm font-semibold tracking-tight text-foreground"
+              className="min-w-0 flex-1"
             >
-              黄岐智鉴
-            </motion.span>
+              <Link
+                href="/"
+                className="block truncate text-sm font-semibold tracking-tight text-foreground transition hover:text-primary"
+                title="返回展厅首页"
+              >
+                黄岐智鉴
+              </Link>
+            </motion.div>
           ) : null}
           <Button
             type="button"
@@ -73,7 +80,9 @@ export function Sidebar() {
         <nav className="flex flex-1 flex-col gap-1" aria-label="主导航">
           {nav.map(({ href, icon: Icon, label }) => {
             const active =
-              pathname === href || pathname.startsWith(`${href}/`);
+              href === "/"
+                ? pathname === "/"
+                : pathname === href || pathname.startsWith(`${href}/`);
             return (
               <Button
                 key={href}

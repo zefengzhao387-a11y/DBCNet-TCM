@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
+import { AppWorkspaceDock } from "./AppWorkspaceDock";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { XaiPanel } from "./XaiPanel";
@@ -72,7 +73,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Sidebar />
             <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col gap-2 sm:gap-3">
               <Topbar />
-              <main className="main-canvas-inner min-h-0 flex-1 overflow-hidden p-3 sm:p-5 lg:p-6">
+              <main className="main-canvas-inner min-h-0 flex-1 overflow-hidden p-3 pb-[max(5.75rem,env(safe-area-inset-bottom,0px)+4.5rem)] sm:p-5 sm:pb-[max(5.75rem,env(safe-area-inset-bottom,0px)+4.5rem)] lg:p-6 lg:pb-6">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={pathname}
@@ -90,6 +91,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="relative z-10 h-full w-0 min-w-0 shrink-0 overflow-visible lg:overflow-hidden">
               <XaiPanel />
             </div>
+            <AppWorkspaceDock />
           </motion.div>
         )}
       </AnimatePresence>
