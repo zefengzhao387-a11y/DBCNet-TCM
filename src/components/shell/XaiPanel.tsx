@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
+import { LogicGraphCanvas } from "./LogicGraphCanvas";
 import { useLgScreen } from "@/hooks/useLgScreen";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui-store";
@@ -69,11 +70,8 @@ export function XaiPanel() {
               收起
             </button>
           </div>
-          <div className="flex flex-1 flex-col items-center justify-center gap-3 overflow-y-auto p-5 text-center text-sm text-muted-foreground sm:p-6">
-            <p className="max-w-[14rem] leading-relaxed">
-              方剂证据图谱将在此以力导向图呈现，背景透明、流光动效已预留接口。
-            </p>
-            <div className="h-32 w-full max-w-[12rem] rounded-2xl border border-dashed border-border/80 bg-background/20" />
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4 sm:p-5">
+            <LogicGraphCanvas className="min-h-0 flex-1 text-left" />
           </div>
         </motion.aside>
       </motion.div>

@@ -7,51 +7,78 @@
   :root {
     --font-serif-stack: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC",
       Georgia, serif;
+    --paper-fiber-opacity: 0.03;
+    --paper-noise-opacity: 0.048;
     --radius: 0.75rem;
     --sidebar-collapsed: 4rem;
     --sidebar-expanded: 15rem;
     --xai-drawer-width: 18.75rem;
-    --background: #eef6ec;
-    --foreground: #132a12;
-    --card: rgba(255, 255, 255, 0.72);
-    --card-foreground: #132a12;
-    --popover: rgba(255, 255, 255, 0.92);
-    --popover-foreground: #132a12;
-    --primary: #2d5a27;
-    --primary-foreground: #f4faf3;
-    --secondary: #dce8d8;
-    --secondary-foreground: #1e3a1a;
-    --muted: #e2efe0;
-    --muted-foreground: #3f5c3a;
-    --accent: #c8e2c0;
-    --accent-foreground: #1a3316;
+    /* 春令 · 淡雅竹青 */
+    --background: #e8f2ed;
+    --foreground: #152822;
+    --card: rgba(255, 255, 255, 0.74);
+    --card-foreground: #152822;
+    --popover: rgba(255, 255, 255, 0.93);
+    --popover-foreground: #152822;
+    --primary: #3d6b5c;
+    --primary-foreground: #f5faf8;
+    --secondary: #d4e8df;
+    --secondary-foreground: #1e342c;
+    --muted: #ddece4;
+    --muted-foreground: #3d5a4e;
+    --accent: #b8d9cc;
+    --accent-foreground: #1a2e28;
     --destructive: #b42318;
     --destructive-foreground: #fff7f7;
-    --border: rgba(45, 90, 39, 0.14);
-    --input: rgba(45, 90, 39, 0.12);
-    --ring: #2d5a27;
-    --season-accent: #2d5a27;
-    --canvas-vignette: rgba(45, 90, 39, 0.06);
-    --glass-fill: rgba(255, 255, 255, 0.45);
+    --border: rgba(61, 107, 92, 0.14);
+    --input: rgba(61, 107, 92, 0.12);
+    --ring: #3d6b5c;
+    --season-accent: #4a7c6a;
+    --canvas-vignette: rgba(61, 107, 92, 0.07);
+    --glass-fill: rgba(255, 255, 255, 0.46);
     --glass-stroke: rgba(255, 255, 255, 0.55);
-    --glass-highlight: rgba(255, 255, 255, 0.35);
-    --app-bg-base: #f4faf3;
-    --app-bg-radial-a: rgba(120, 200, 120, 0.22);
-    --app-bg-radial-b: rgba(200, 240, 190, 0.35);
-    --sidebar-tint: rgba(45, 90, 39, 0.06);
-    --xai-tint: rgba(45, 90, 39, 0.05);
+    --glass-highlight: rgba(255, 255, 255, 0.36);
+    --app-bg-base: #eef6f2;
+    --app-bg-radial-a: rgba(100, 168, 148, 0.2);
+    --app-bg-radial-b: rgba(180, 220, 200, 0.32);
+    --sidebar-tint: rgba(61, 107, 92, 0.07);
+    --xai-tint: rgba(61, 107, 92, 0.05);
     /* 气韵背景 hint（QiFlow 与 Atmosphere 季节同步） */
-    --qi-spring: #c8d4c0;
+    --qi-spring: #a8c4b8;
     --qi-summer: #b22222;
     --qi-autumn: #c5a059;
-    --qi-winter: #161a2d;
+    --qi-winter: #1a1c1e;
     /* 莫兰迪天幕锚色：春宣纸质 */
-    --morandi-sky-top: #e3ead3;
+    --morandi-sky-top: #dce8e2;
     --morandi-sky-bottom: #121614;
   }
 
   html {
     scroll-padding-top: max(5.5rem, env(safe-area-inset-top, 0px));
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-noto-serif), var(--font-serif-stack);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-wrap: balance;
+  }
+
+  h1 {
+    letter-spacing: 0.14em;
+  }
+
+  h2 {
+    letter-spacing: 0.13em;
+  }
+
+  h3,
+  h4 {
+    letter-spacing: 0.11em;
+    font-weight: 500;
   }
 
   @media (max-width: 1023px) {
@@ -61,8 +88,22 @@
   }
 
   html.season-spring {
-    --morandi-sky-top: #e3ead3;
+    --morandi-sky-top: #dce8e2;
     --morandi-sky-bottom: #121614;
+  }
+
+  html[data-season="winter"] {
+    --paper-fiber-opacity: 0.04;
+    --paper-noise-opacity: 0.058;
+  }
+
+  html[data-season="winter"] .paper-grain-fiber {
+    mix-blend-mode: soft-light;
+  }
+
+  html[data-season="winter"] .paper-grain-noise {
+    mix-blend-mode: overlay;
+    opacity: var(--paper-noise-opacity);
   }
 
   /* Summer — 晚霞朱极暗部 + 朱砂流光 */
@@ -135,39 +176,39 @@
     --xai-tint: rgba(176, 141, 87, 0.06);
   }
 
-  /* Winter — 雪夜蓝 + 极深墨色 */
+  /* Winter — 极深墨色 · 微冷高光 */
   html.season-winter {
-    --morandi-sky-top: #161a2d;
-    --morandi-sky-bottom: #030305;
-    --background: #0e1018;
-    --foreground: #e9ecf7;
-    --card: rgba(26, 28, 44, 0.55);
-    --card-foreground: #e9ecf7;
-    --popover: rgba(22, 24, 36, 0.92);
-    --popover-foreground: #e9ecf7;
-    --primary: #8b93c9;
-    --primary-foreground: #0e1018;
-    --secondary: #1a1c2c;
-    --secondary-foreground: #d8dcf0;
-    --muted: #16192a;
-    --muted-foreground: #9aa3c4;
-    --accent: #252842;
-    --accent-foreground: #eef0ff;
-    --destructive: #f87171;
-    --destructive-foreground: #1a0505;
-    --border: rgba(139, 147, 201, 0.18);
-    --input: rgba(139, 147, 201, 0.14);
-    --ring: #a5b0e8;
-    --season-accent: #1a1c2c;
-    --canvas-vignette: rgba(0, 0, 0, 0.35);
-    --glass-fill: rgba(26, 28, 44, 0.45);
-    --glass-stroke: rgba(255, 255, 255, 0.08);
-    --glass-highlight: rgba(120, 140, 255, 0.08);
-    --app-bg-base: #0a0c12;
-    --app-bg-radial-a: rgba(40, 50, 120, 0.25);
-    --app-bg-radial-b: rgba(26, 28, 44, 0.85);
-    --sidebar-tint: rgba(139, 147, 201, 0.06);
-    --xai-tint: rgba(139, 147, 201, 0.05);
+    --morandi-sky-top: #101214;
+    --morandi-sky-bottom: #020203;
+    --background: #0a0b0d;
+    --foreground: #e6e4e0;
+    --card: rgba(22, 24, 28, 0.58);
+    --card-foreground: #e6e4e0;
+    --popover: rgba(18, 20, 24, 0.94);
+    --popover-foreground: #e6e4e0;
+    --primary: #9a9da8;
+    --primary-foreground: #0a0b0d;
+    --secondary: #1c1e22;
+    --secondary-foreground: #d4d2cc;
+    --muted: #141618;
+    --muted-foreground: #8a8884;
+    --accent: #2a2c30;
+    --accent-foreground: #f0eeea;
+    --destructive: #e07068;
+    --destructive-foreground: #1a0806;
+    --border: rgba(200, 200, 210, 0.12);
+    --input: rgba(200, 200, 210, 0.1);
+    --ring: #c8c6c2;
+    --season-accent: #2c2e32;
+    --canvas-vignette: rgba(0, 0, 0, 0.42);
+    --glass-fill: rgba(24, 26, 30, 0.48);
+    --glass-stroke: rgba(255, 255, 255, 0.07);
+    --glass-highlight: rgba(255, 255, 255, 0.04);
+    --app-bg-base: #08090a;
+    --app-bg-radial-a: rgba(48, 52, 58, 0.35);
+    --app-bg-radial-b: rgba(18, 20, 24, 0.88);
+    --sidebar-tint: rgba(120, 120, 128, 0.08);
+    --xai-tint: rgba(120, 120, 128, 0.06);
   }
 
   body {
@@ -186,6 +227,7 @@
         transparent 50%
       ),
       linear-gradient(180deg, var(--background), var(--app-bg-base));
+    background-attachment: fixed;
   }
 }
 
@@ -384,7 +426,7 @@
 
   /** 中文展陈标题：衬线 + 疏朗字距（清新不过挤） */
   .museum-cn-title {
-    @apply font-serif font-medium tracking-[0.16em];
+    @apply font-serif font-medium tracking-[0.18em];
   }
 
   /**
@@ -433,5 +475,45 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /** 逻辑链 SVG 连线流光 */
+  .logic-flow-stroke {
+    animation: logic-flow-dash 2.4s linear infinite;
+  }
+
+  @keyframes logic-flow-dash {
+    to {
+      stroke-dashoffset: -72;
+    }
+  }
+
+  /** 登录页 · 玉石感玻璃 */
+  .jade-login-card {
+    background: linear-gradient(
+      155deg,
+      rgba(255, 255, 255, 0.42) 0%,
+      rgba(255, 255, 255, 0.22) 42%,
+      rgba(255, 255, 255, 0.12) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.65),
+      0 28px 64px rgba(42, 50, 44, 0.1),
+      0 0 0 1px color-mix(in srgb, var(--season-accent) 8%, transparent);
+    backdrop-filter: blur(28px) saturate(1.25);
+  }
+
+  html[data-season="winter"] .jade-login-card {
+    background: linear-gradient(
+      155deg,
+      rgba(32, 34, 40, 0.55) 0%,
+      rgba(24, 26, 30, 0.4) 50%,
+      rgba(18, 20, 24, 0.35) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 28px 64px rgba(0, 0, 0, 0.35);
   }
 }

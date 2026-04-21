@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { BookOpen, Library, Search } from "lucide-react";
 
+import { KnowledgeBookmarkStrip } from "@/components/knowledge/KnowledgeBookmarkStrip";
+
 export const metadata: Metadata = {
-  title: "知识库 · 黄岐智鉴",
+  title: "知识库 · 岐黄智鉴",
   description: "方药、典籍与术语索引占位；可后续对接检索服务或静态语料。",
 };
 
@@ -35,6 +37,8 @@ export default function KnowledgePage() {
           <p className="mt-4 text-center text-xs text-muted-foreground">接入检索服务后，此处将支持拼音、同义词与图谱跳转。</p>
         </div>
       </div>
+
+      <KnowledgeBookmarkStrip />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-border/50 bg-muted/10 p-5 transition hover:border-primary/25 hover:bg-muted/20">

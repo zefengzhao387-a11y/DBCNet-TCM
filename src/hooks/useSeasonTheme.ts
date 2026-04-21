@@ -57,10 +57,10 @@ export function useSeasonTheme() {
   /** 与首页 `museum-airy` 色系说明一致，便于文案展示 */
   const themeSkinLabel = useMemo(() => {
     const map: Record<Season, string> = {
-      spring: "春令 · 纸本清新",
-      summer: "夏令 · 暖素柔和",
-      autumn: "秋令 · 米金温润",
-      winter: "冬令 · 雪青浅灰",
+      spring: "春令 · 竹青淡雅",
+      summer: "夏令 · 朱荷温润",
+      autumn: "秋令 · 银杏鎏金",
+      winter: "冬令 · 墨韵深沉",
     };
     return map[season];
   }, [season]);
@@ -77,9 +77,6 @@ export function useSeasonTheme() {
 
   useEffect(() => {
     syncDocumentSeason(season);
-    return () => {
-      document.documentElement.classList.remove(`season-${season}`);
-    };
   }, [season]);
 
   useEffect(() => {

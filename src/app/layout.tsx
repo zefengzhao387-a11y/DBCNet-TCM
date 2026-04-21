@@ -34,7 +34,7 @@ const notoSerifSC = Noto_Serif_SC({
 });
 
 export const metadata: Metadata = {
-  title: "黄岐智鉴 · 多模态中医智能决策",
+  title: "岐黄智鉴 · 多模态中医智能决策",
   description:
     "DBCNet 双分支（生成式感知 + 知识图谱约束）与舌象、问卷等多模态体质辨识的可视化入口。",
 };
@@ -44,8 +44,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4faf3" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e1018" },
+    { media: "(prefers-color-scheme: light)", color: "#eef6f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#08090a" },
   ],
 };
 

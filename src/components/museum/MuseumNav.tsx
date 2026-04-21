@@ -27,7 +27,7 @@ export function MuseumNav({ className }: { className?: string }) {
         href="#hero"
         className="group flex shrink-0 items-baseline gap-0.5 font-serif text-[13px] font-medium tracking-[0.12em] text-stone-800 transition hover:text-stone-950"
       >
-        <span>黄岐智鉴</span>
+        <span>岐黄智鉴</span>
         <span className="text-[10px] text-stone-300 transition group-hover:text-stone-400">
           ·
         </span>

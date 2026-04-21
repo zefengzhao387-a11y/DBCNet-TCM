@@ -1,8 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookMarked, CalendarDays, Leaf, Sparkles } from "lucide-react";
+import {
+  ArrowUpRight,
+  BookMarked,
+  CalendarDays,
+  Leaf,
+  Sparkles,
+} from "lucide-react";
+import Link from "next/link";
 
+import { FavoriteStarButton } from "@/components/favorites/FavoriteStarButton";
 import { getDailyTcmForDate } from "@/data/daily-tcm";
 import { SEASONAL_WELLNESS } from "@/data/seasonal-wellness";
 import { useSeasonTheme } from "@/hooks/useSeasonTheme";
@@ -33,7 +41,7 @@ export function MuseumDailySeason() {
 
   return (
     <section
-      id="daily-season"
+      id="home-bento"
       className="relative z-10 scroll-mt-[max(4.75rem,calc(env(safe-area-inset-top,0px)+3.5rem))] pb-20 pt-12 sm:pb-24 sm:pt-16 lg:scroll-mt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))]"
     >
       <div className="relative mx-auto max-w-6xl">
@@ -76,19 +84,32 @@ export function MuseumDailySeason() {
           </div>
         </motion.div>
 
-        <div className="grid min-w-0 gap-6 lg:grid-cols-2">
+        <div className="grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-12 md:gap-5">
           <motion.article
             initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            viewport={{ once: true, amount: 0.15 }}
+            viewport={{ once: true, amount: 0.12 }}
             transition={{ duration: 0.78, delay: 0.04, ease: [0.16, 1, 0.3, 1] }}
-            className="museum-glass-card relative min-w-0 p-6 sm:p-8"
+            className="museum-glass-card relative flex min-h-[min(22rem,52vh)] min-w-0 flex-col rounded-[2rem] p-6 sm:p-8 md:col-span-7 md:row-span-2"
           >
-            <div className="mb-5 flex min-w-0 items-center gap-2 border-b border-stone-200/60 pb-4">
-              <BookMarked className="size-4 shrink-0 text-[color-mix(in_srgb,var(--season-accent)_48%,#78716c)]" aria-hidden />
-              <h2 className="font-serif text-lg font-medium tracking-[0.12em] text-stone-800">
-                每日一词
-              </h2>
+            <div className="mb-5 flex min-w-0 items-center justify-between gap-3 border-b border-stone-200/60 pb-4">
+              <div className="flex min-w-0 items-center gap-2">
+                <BookMarked className="size-4 shrink-0 text-[color-mix(in_srgb,var(--season-accent)_48%,#78716c)]" aria-hidden />
+                <h2 className="font-serif text-lg font-medium tracking-[0.12em] text-stone-800">
+                  每日一词
+                </h2>
+              </div>
+              <FavoriteStarButton
+                className="shrink-0 text-stone-500 hover:bg-white/50"
+                item={{
+                  id: `term-${encodeURIComponent(daily.term)}`,
+                  kind: "term",
+                  title: daily.term,
+                  subtitle: daily.gloss.slice(0, 72),
+                  tags: ["每日一词", seasonZh],
+                }}
+                label="收藏词条"
+              />
             </div>
             <p className="font-serif text-[clamp(1.75rem,4vw,2.35rem)] font-medium tracking-[0.14em] text-stone-800">
               {daily.term}
@@ -96,7 +117,7 @@ export function MuseumDailySeason() {
             {daily.reading ? (
               <p className="mt-2 font-sans text-[13px] text-stone-400">{daily.reading}</p>
             ) : null}
-            <p className="mt-5 font-sans text-[14px] font-light leading-[1.85] text-stone-600">
+            <p className="mt-5 flex-1 font-sans text-[14px] font-light leading-[1.85] text-stone-600">
               {daily.gloss}
             </p>
           </motion.article>
@@ -104,38 +125,62 @@ export function MuseumDailySeason() {
           <motion.article
             initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.78, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="museum-glass-card relative min-w-0 p-6 sm:p-8"
+            viewport={{ once: true, amount: 0.12 }}
+            transition={{ duration: 0.78, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+            className="museum-glass-card relative flex min-h-[13.5rem] min-w-0 flex-col rounded-[1.75rem] p-6 sm:p-7 md:col-span-5 md:row-start-1"
           >
-            <div className="mb-5 flex min-w-0 items-center gap-2 border-b border-stone-200/60 pb-4">
+            <div className="mb-4 flex min-w-0 items-center gap-2 border-b border-stone-200/60 pb-3">
               <Leaf className="size-4 shrink-0 text-[color-mix(in_srgb,var(--season-accent)_48%,#78716c)]" aria-hidden />
               <h2 className="font-serif text-lg font-medium tracking-[0.12em] text-stone-800">
                 时令养生
               </h2>
             </div>
-            <h3 className="font-serif text-[1.15rem] font-medium text-stone-800 sm:text-[1.25rem]">
+            <h3 className="font-serif text-[1.05rem] font-medium leading-snug text-stone-800 sm:text-[1.15rem]">
               {wellness.title}
             </h3>
-            <ul className="mt-5 space-y-4 font-sans text-[13.5px] font-light leading-[1.8] text-stone-600">
-              <li>
-                <span className="font-medium text-stone-700">起居情志 · </span>
-                {wellness.advice}
-              </li>
-              <li>
-                <span className="font-medium text-stone-700">膳食示意 · </span>
-                {wellness.diet}
-              </li>
-              <li>
-                <span className="font-medium text-stone-700">日常节律 · </span>
-                {wellness.routine}
-              </li>
-            </ul>
-            <p className="mt-6 border-t border-stone-200/60 pt-4 font-sans text-[11px] leading-relaxed text-stone-400">
-              全站皮肤随四时（春/夏/秋/冬）与主题变量联动；文意为科普示意，具体诊疗请遵医嘱。
+            <p className="mt-3 line-clamp-3 font-sans text-[13px] font-light leading-[1.75] text-stone-600">
+              <span className="font-medium text-stone-700">起居 · </span>
+              {wellness.advice}
+            </p>
+            <p className="mt-2 line-clamp-2 font-sans text-[12.5px] font-light leading-[1.7] text-stone-500">
+              <span className="font-medium text-stone-600">膳食 · </span>
+              {wellness.diet}
             </p>
           </motion.article>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.12 }}
+            transition={{ duration: 0.78, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            className="md:col-span-5 md:col-start-8 md:row-start-2"
+          >
+            <Link
+              href="/constitution"
+              className="museum-glass-card group flex min-h-[13.5rem] h-full flex-col justify-between rounded-[1.75rem] p-6 transition duration-300 hover:-translate-y-0.5 sm:p-7"
+            >
+              <div>
+                <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.26em] text-stone-400">
+                  体质测算
+                </p>
+                <h3 className="mt-3 font-serif text-[1.35rem] font-medium tracking-[0.1em] text-stone-800 sm:text-[1.5rem]">
+                  舌象 + 问卷
+                </h3>
+                <p className="mt-2 max-w-[14rem] font-sans text-[13px] font-light leading-relaxed text-stone-500">
+                  多模态体质辨识入口，结果可与临床决策台联动（示意）。
+                </p>
+              </div>
+              <span className="mt-6 inline-flex items-center gap-2 font-sans text-[13px] font-medium text-[color-mix(in_srgb,var(--season-accent)_65%,#57534e)]">
+                进入工作台
+                <ArrowUpRight className="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+              </span>
+            </Link>
+          </motion.div>
         </div>
+
+        <p className="mt-8 max-w-3xl font-sans text-[11px] leading-relaxed text-stone-400">
+          全站皮肤随四时与主题变量联动；文意为科普示意，具体诊疗请遵医嘱。
+        </p>
       </div>
     </section>
   );

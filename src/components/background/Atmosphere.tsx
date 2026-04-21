@@ -17,21 +17,38 @@ const STARDUST_COUNT = 72;
 
 type AtmosphereProps = {
   season: Season;
+  /** 首页长卷用 extended；工作台等固定视口用 viewport */
+  layout?: "extended" | "viewport";
 };
 
-/** 竖向只做极弱明度起伏，避免与罩层叠出「一道杠」色差 */
+/** 竖向只做极弱明度起伏，四时与「竹青 / 朱荷 / 银杏金 / 墨色」氛围一致 */
 function skyBackground(season: Season): string {
   switch (season) {
     case "spring":
-      return "linear-gradient(180deg, #f9fcf9 0%, #f6faf6 35%, #f3f7f3 70%, #f0f5f0 100%)";
+      return "linear-gradient(180deg, #f4faf7 0%, #eef6f2 32%, #e8f2ec 68%, #e2ede6 100%)";
     case "summer":
-      return "linear-gradient(180deg, #fcfaf8 0%, #f9f5f0 38%, #f6f0e8 72%, #f3ebe4 100%)";
+      return "linear-gradient(180deg, #fcf9f6 0%, #f8f2ec 38%, #f3ebe4 72%, #efe6dc 100%)";
     case "autumn":
-      return "linear-gradient(180deg, #fcfaf6 0%, #f8f4ec 38%, #f4efe4 72%, #f1ebe0 100%)";
+      return "linear-gradient(180deg, #fcf9f2 0%, #f8f2e6 38%, #f2e9d8 72%, #ebe0cc 100%)";
     case "winter":
-      return "linear-gradient(180deg, #f9fafc 0%, #f4f6fa 38%, #eef2f8 72%, #eaeff6 100%)";
+      return "linear-gradient(180deg, #121418 0%, #0e1014 38%, #0a0c10 72%, #060708 100%)";
     default:
-      return "linear-gradient(180deg, #f9fcf9 0%, #f6faf6 35%, #f3f7f3 70%, #f0f5f0 100%)";
+      return "linear-gradient(180deg, #f4faf7 0%, #eef6f2 32%, #e8f2ec 68%, #e2ede6 100%)";
+  }
+}
+
+function stardustFill(season: Season): string {
+  switch (season) {
+    case "spring":
+      return "rgba(62, 108, 92, 0.42)";
+    case "summer":
+      return "rgba(150, 72, 68, 0.4)";
+    case "autumn":
+      return "rgba(140, 112, 68, 0.44)";
+    case "winter":
+      return "rgba(180, 188, 210, 0.22)";
+    default:
+      return "rgba(62, 108, 92, 0.42)";
   }
 }
 
@@ -52,7 +69,10 @@ type DustSpec = {
  */
 const CANVAS_EXTRA_VH = 85;
 
-export function Atmosphere({ season }: AtmosphereProps) {
+export function Atmosphere({
+  season,
+  layout = "extended",
+}: AtmosphereProps) {
   const { scrollY } = useScroll();
   const particleScroll = useTransform(scrollY, (v) => v * 0.3);
   const particleLayerY = useSpring(particleScroll, {
@@ -92,9 +112,13 @@ export function Atmosphere({ season }: AtmosphereProps) {
   }, []);
 
   const sky = useMemo(() => skyBackground(season), [season]);
+  const dustFill = useMemo(() => stardustFill(season), [season]);
 
-  const canvasMin = `calc(100dvh + ${CANVAS_EXTRA_VH * 2}vh)`;
-  const canvasTop = `-${CANVAS_EXTRA_VH}vh`;
+  const canvasMin =
+    layout === "viewport"
+      ? "100dvh"
+      : `calc(100dvh + ${CANVAS_EXTRA_VH * 2}vh)`;
+  const canvasTop = layout === "viewport" ? "0" : `-${CANVAS_EXTRA_VH}vh`;
 
   return (
     <div
@@ -121,7 +145,7 @@ export function Atmosphere({ season }: AtmosphereProps) {
                 cx={p.cx}
                 cy={p.cy}
                 r={p.r}
-                fill="rgba(56, 96, 72, 0.62)"
+                fill={dustFill}
                 animate={{
                   opacity: [p.base * 0.65, p.base * 2.75, p.base * 0.7],
                   cx: [p.cx, p.cx + p.dx, p.cx - p.dx * 0.35, p.cx],
@@ -143,11 +167,13 @@ export function Atmosphere({ season }: AtmosphereProps) {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 42%, rgba(255,255,255,0.04) 100%)",
+            season === "winter"
+              ? "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 45%, rgba(255,255,255,0.02) 100%)"
+              : "linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 42%, rgba(255,255,255,0.05) 100%)",
         }}
-        animate={{ opacity: [0.78, 0.9, 0.74, 0.86, 0.78] }}
+        animate={{ opacity: [0.72, 0.88, 0.68, 0.84, 0.72] }}
         transition={{
-          duration: 28,
+          duration: 36,
           repeat: Infinity,
           ease: "easeInOut",
         }}
@@ -165,7 +191,7 @@ export function Atmosphere({ season }: AtmosphereProps) {
           scale: [1, 1.05, 0.98, 1],
         }}
         transition={{
-          duration: 52,
+          duration: 72,
           repeat: Infinity,
           ease: "easeInOut",
         }}
@@ -182,7 +208,7 @@ export function Atmosphere({ season }: AtmosphereProps) {
           scale: [1, 0.97, 1.04, 1],
         }}
         transition={{
-          duration: 58,
+          duration: 78,
           repeat: Infinity,
           ease: "easeInOut",
           delay: 5,

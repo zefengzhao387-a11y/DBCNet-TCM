@@ -1,14 +1,24 @@
 "use client";
 
-import { Loader2, Stethoscope } from "lucide-react";
-import { useState } from "react";
+import { Download, Loader2, Stethoscope } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
+import { PrescriptionScrollCard } from "@/components/clinical/PrescriptionScrollCard";
+import { ClinicalHeirloomReport } from "@/components/reports/ClinicalHeirloomReport";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { IntegrationDetails } from "@/components/shell/IntegrationDetails";
+import { useSeasonTheme } from "@/hooks/useSeasonTheme";
 import { requestClinicalInference } from "@/lib/api/clinical-inference";
 import { hasPublicApiOrigin } from "@/lib/api/public-origin";
+import {
+  buildInterimGraphFromComplaint,
+  graphFromInferenceResponse,
+} from "@/lib/clinical-graph";
+import { downloadElementAsPng } from "@/lib/heirloom-report";
 import { cn } from "@/lib/utils";
+import { useLogicGraphStore } from "@/stores/logic-graph-store";
+import { useUIStore } from "@/stores/ui-store";
 import type { ClinicalInferenceResponse } from "@/types/clinical-inference";
 
 export function ClinicalWorkbench() {
@@ -17,22 +27,68 @@ export function ClinicalWorkbench() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ClinicalInferenceResponse | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
+  const { themeSkinLabel } = useSeasonTheme();
+  const graphNodes = useLogicGraphStore((s) => s.nodes);
+  const setXaiOpen = useUIStore((s) => s.setXaiOpen);
+  const setStreaming = useLogicGraphStore((s) => s.setStreaming);
+  const setComplete = useLogicGraphStore((s) => s.setComplete);
+
+  const seasonalHint = `${themeSkinLabel}；饮食有节，起居有常，情志舒畅为宜。`;
+
+  useEffect(() => {
+    setXaiOpen(true);
+  }, [setXaiOpen]);
+
+  useEffect(() => {
+    if (!loading) return;
+    const id = window.setInterval(() => {
+      const s = useLogicGraphStore.getState();
+      if (s.activeEdgeCount < s.edges.length) {
+        s.revealNextEdge();
+      }
+    }, 200);
+    return () => window.clearInterval(id);
+  }, [loading]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setResult(null);
+    const cc = chiefComplaint.trim();
+    setXaiOpen(true);
+    const interim = buildInterimGraphFromComplaint(cc);
+    setStreaming(interim.nodes, interim.edges);
     setLoading(true);
     try {
       const data = await requestClinicalInference({
-        chiefComplaint: chiefComplaint.trim(),
+        chiefComplaint: cc,
         fourExaminationsNotes: fourNotes.trim() || undefined,
         locale: "zh-CN",
       });
       setResult(data);
+      const g = graphFromInferenceResponse(data, cc);
+      setComplete(g.nodes, g.edges);
     } catch (err) {
       setError(err instanceof Error ? err.message : "请求失败");
+      setComplete(interim.nodes, interim.edges);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleHeirloomExport() {
+    if (!reportRef.current) return;
+    setExporting(true);
+    try {
+      await new Promise((r) => window.setTimeout(r, 500));
+      await downloadElementAsPng(
+        reportRef.current,
+        `岐黄智鉴-传家辨证笺-${new Date().toISOString().slice(0, 10)}.png`,
+      );
+    } finally {
+      setExporting(false);
     }
   }
 
@@ -115,8 +171,9 @@ export function ClinicalWorkbench() {
               <code className="rounded bg-muted/80 px-1">fourExaminationsNotes</code>。
             </p>
             <p className="mt-2">
-              响应中可携带 <code className="rounded bg-muted/80 px-1">evidenceGraph</code> 供右侧「XAI
-              溯源」面板渲染。
+              响应中可携带 <code className="rounded bg-muted/80 px-1">evidenceGraph</code> 供右侧「逻辑链」
+              流光图谱渲染；<code className="rounded bg-muted/80 px-1">prescription</code>{" "}
+              供中间手写方笺卡片展示。
             </p>
             <p className="mt-2">
               <code className="rounded bg-muted/80 px-1">NEXT_PUBLIC_API_BASE</code>{" "}
@@ -129,26 +186,74 @@ export function ClinicalWorkbench() {
           <div
             className={cn(
               "flex flex-1 flex-col rounded-3xl border border-border/60 p-5 sm:p-6",
-              result
+              result || loading
                 ? "bg-gradient-to-br from-card via-card to-primary/[0.03]"
                 : "border-dashed bg-muted/15",
             )}
           >
-            {!result ? (
+            {!result && !loading ? (
               <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
                 <div className="rounded-full border border-border/60 bg-background/40 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
                   输出预览
                 </div>
                 <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-                  提交后，辨证叙事、证候标签与图谱摘要将显示在此；宽屏下与左侧表单并排，便于对照阅读。
+                  提交后，辨证叙事、手书方笺与右侧逻辑链将同步呈现；宽屏下可并排对照阅读。
                 </p>
               </div>
-            ) : (
+            ) : null}
+            {loading && !result ? (
+              <div className="flex flex-1 flex-col items-center justify-center gap-4 px-4 text-center">
+                <Loader2
+                  className="size-10 animate-spin text-primary"
+                  aria-hidden
+                />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-foreground">
+                    正在合参辨证…
+                  </p>
+                  <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
+                    右侧「逻辑链」已根据主诉开始推演连线；流光将随推理步骤逐条点亮。
+                  </p>
+                </div>
+              </div>
+            ) : null}
+            {result ? (
               <div className="flex flex-1 flex-col gap-5 overflow-y-auto">
-                <h2 className="font-serif text-lg font-medium text-foreground">辨证参考</h2>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h2 className="font-serif text-lg font-medium text-foreground">辨证参考</h2>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    className="h-10 rounded-xl gap-2"
+                    disabled={exporting}
+                    onClick={() => void handleHeirloomExport()}
+                  >
+                    {exporting ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : (
+                      <Download className="size-4" aria-hidden />
+                    )}
+                    传家报告长图
+                  </Button>
+                </div>
                 <p className="whitespace-pre-wrap text-sm leading-[1.85] text-foreground/90">
                   {result.narrative}
                 </p>
+                {result.prescription?.lines?.length ? (
+                  <PrescriptionScrollCard
+                    title={result.prescription.title}
+                    lines={result.prescription.lines}
+                    sealNumber={result.prescription.sealNumber}
+                    favorite={{
+                      id: `rx-${result.prescription.lines.map((l) => l.herb).join("-")}`,
+                      kind: "formula",
+                      title: result.prescription.title ?? "辨证方意",
+                      subtitle: result.syndromeLabels?.join(" · "),
+                      tags: result.syndromeLabels ?? [],
+                    }}
+                  />
+                ) : null}
                 {result.syndromeLabels?.length ? (
                   <div className="flex flex-wrap gap-2">
                     {result.syndromeLabels.map((t) => (
@@ -161,29 +266,29 @@ export function ClinicalWorkbench() {
                     ))}
                   </div>
                 ) : null}
-                {result.evidenceGraph?.nodes?.length ? (
-                  <div className="rounded-2xl border border-border/50 bg-background/40 p-4">
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      证据链节点
-                    </p>
-                    <ul className="space-y-2 text-sm text-foreground/85">
-                      {result.evidenceGraph.nodes.map((n) => (
-                        <li key={n.id} className="flex items-center gap-2">
-                          <span className="size-1.5 shrink-0 rounded-full bg-season-accent" />
-                          <span>{n.label}</span>
-                          {n.role ? (
-                            <span className="text-xs text-muted-foreground">（{n.role}）</span>
-                          ) : null}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  症状—证候—方药的连线与流光动效见右侧「逻辑链」面板；宽屏可并排对照阅读。
+                </p>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
+
+      {result ? (
+        <div
+          className="pointer-events-none fixed left-[-10000px] top-0 z-[-1]"
+          aria-hidden
+        >
+          <ClinicalHeirloomReport
+            ref={reportRef}
+            result={result}
+            chiefComplaint={chiefComplaint}
+            graphNodes={graphNodes}
+            seasonalHint={seasonalHint}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

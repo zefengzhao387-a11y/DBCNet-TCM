@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "登录 · DBCNet-TCM",
-  description: "DBCNet-TCM 工作站鉴权（演示）",
+  title: "入室 · 岐黄智鉴",
+  description: "演示鉴权入口；背景随四时气韵流动。",
 };
 
 export default function LoginLayout({

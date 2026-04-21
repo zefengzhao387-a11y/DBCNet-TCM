@@ -1,14 +1,50 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Camera, Check, Loader2, Sparkles, Upload } from "lucide-react";
-import { useCallback, useEffect, useId, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Camera,
+  Check,
+  Download,
+  Loader2,
+  Sparkles,
+  Upload,
+} from "lucide-react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 
+import { ConstitutionRadarChart, type RadarDatum } from "@/components/constitution/ConstitutionRadarChart";
+import { ConstitutionHeirloomReport } from "@/components/reports/ConstitutionHeirloomReport";
 import { Button } from "@/components/ui/button";
 import { IntegrationDetails } from "@/components/shell/IntegrationDetails";
 import { requestConstitutionScreening } from "@/lib/api/constitution-screening";
 import { hasPublicApiOrigin } from "@/lib/api/public-origin";
+import { downloadElementAsPng } from "@/lib/heirloom-report";
 import { cn } from "@/lib/utils";
 import type { ConstitutionScreeningResponse } from "@/types/constitution-screening";
+
+const QUESTIONS = [
+  {
+    key: "energy_level" as const,
+    label: "近期是否容易疲乏？",
+    hint: "指体力或精神不振、恢复慢的主观感受。",
+  },
+  {
+    key: "cold_intolerance" as const,
+    label: "是否比旁人更怕冷？",
+    hint: "在相同环境下畏寒、喜暖的程度。",
+  },
+  {
+    key: "sleep_quality" as const,
+    label: "睡眠是否易浅、多梦或难入睡？",
+    hint: "以近两周整体情况为准。",
+  },
+  {
+    key: "digestion_discomfort" as const,
+    label: "脘腹是否常有不适（胀、满、隐痛）？",
+    hint: "与饮食或情绪相关的胃肠主观不适。",
+  },
+];
 
 function useObjectUrl(file: File | null) {
   const [url, setUrl] = useState<string | null>(null);
@@ -24,59 +60,41 @@ function useObjectUrl(file: File | null) {
   return url;
 }
 
-function LikertRow({
-  label,
-  hint,
-  value,
-  onChange,
-}: {
-  label: string;
-  hint: string;
-  value: number;
-  onChange: (n: number) => void;
-}) {
-  return (
-    <div className="space-y-3 rounded-2xl border border-border/50 bg-background/40 p-4 sm:p-5">
-      <div>
-        <p className="font-medium text-foreground">{label}</p>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{hint}</p>
-      </div>
-      <div className="flex gap-1.5 sm:gap-2">
-        {[1, 2, 3, 4, 5].map((n) => (
-          <button
-            key={n}
-            type="button"
-            onClick={() => onChange(n)}
-            className={cn(
-              "h-11 min-w-0 flex-1 rounded-xl text-sm font-semibold tabular-nums transition sm:h-12",
-              value === n
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted/40 text-muted-foreground hover:bg-muted/70 hover:text-foreground",
-            )}
-          >
-            {n}
-          </button>
-        ))}
-      </div>
-      <p className="text-center text-[11px] text-muted-foreground">1 几乎没有 · 5 非常明显</p>
-    </div>
-  );
+function toRadarData(
+  types: ConstitutionScreeningResponse["constitutionTypes"],
+): RadarDatum[] {
+  const raw = types.map((c) => ({
+    label: c.label.replace(/（演示）/g, "").trim(),
+    value: Math.min(1, Math.max(0, c.score > 1 ? c.score / 100 : c.score)),
+  }));
+  const max = Math.max(...raw.map((r) => r.value), 0.08);
+  return raw.map((r) => ({ ...r, value: r.value / max }));
 }
 
 export function ConstitutionWorkbench() {
   const inputId = useId();
   const [phase, setPhase] = useState<"wizard" | "result">("wizard");
   const [wizardStep, setWizardStep] = useState<1 | 2>(1);
+  const [quizIndex, setQuizIndex] = useState(0);
   const [file, setFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
-  const [energy, setEnergy] = useState(3);
-  const [coldIntolerance, setColdIntolerance] = useState(3);
-  const [sleep, setSleep] = useState(3);
-  const [digestion, setDigestion] = useState(3);
+  const [answers, setAnswers] = useState({
+    energy_level: 3,
+    cold_intolerance: 3,
+    sleep_quality: 3,
+    digestion_discomfort: 3,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ConstitutionScreeningResponse | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
   const previewUrl = useObjectUrl(file);
+
+  const radarData = useMemo(
+    () => (result ? toRadarData(result.constitutionTypes) : []),
+    [result],
+  );
 
   const onDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -88,13 +106,16 @@ export function ConstitutionWorkbench() {
   function resetAll() {
     setPhase("wizard");
     setWizardStep(1);
+    setQuizIndex(0);
     setFile(null);
     setResult(null);
     setError(null);
-    setEnergy(3);
-    setColdIntolerance(3);
-    setSleep(3);
-    setDigestion(3);
+    setAnswers({
+      energy_level: 3,
+      cold_intolerance: 3,
+      sleep_quality: 3,
+      digestion_discomfort: 3,
+    });
   }
 
   async function onSubmit() {
@@ -102,12 +123,7 @@ export function ConstitutionWorkbench() {
     setLoading(true);
     try {
       const data = await requestConstitutionScreening(file, {
-        answers: {
-          energy_level: energy,
-          cold_intolerance: coldIntolerance,
-          sleep_quality: sleep,
-          digestion_discomfort: digestion,
-        },
+        answers: { ...answers },
       });
       setResult(data);
       setPhase("result");
@@ -118,8 +134,26 @@ export function ConstitutionWorkbench() {
     }
   }
 
-  const stepLabels = ["舌象", "量表", "报告"] as const;
-  const currentStepIndex = phase === "result" ? 2 : wizardStep - 1;
+  async function handleExportHeirloom() {
+    if (!reportRef.current) return;
+    setExporting(true);
+    try {
+      await new Promise((r) => window.setTimeout(r, 400));
+      await downloadElementAsPng(
+        reportRef.current,
+        `岐黄智鉴-体质笺-${new Date().toISOString().slice(0, 10)}.png`,
+      );
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  const currentQuestion = QUESTIONS[quizIndex];
+  const answerVal = answers[currentQuestion.key];
+
+  const stepLabels = ["舌象", "问卷", "报告"] as const;
+  const currentStepIndex =
+    phase === "result" ? 2 : wizardStep === 1 ? 0 : 1;
 
   return (
     <div className="mx-auto flex h-full min-h-0 max-w-3xl flex-col gap-6 overflow-y-auto pb-2 lg:max-w-5xl">
@@ -142,7 +176,6 @@ export function ConstitutionWorkbench() {
           </div>
         </div>
 
-        {/* 步骤条 */}
         <div className="flex items-center gap-2 sm:gap-3" aria-hidden>
           {stepLabels.map((label, i) => {
             const done = i < currentStepIndex;
@@ -248,7 +281,10 @@ export function ConstitutionWorkbench() {
                   type="button"
                   variant="secondary"
                   className="h-12 rounded-2xl px-6"
-                  onClick={() => setWizardStep(2)}
+                  onClick={() => {
+                    setWizardStep(2);
+                    setQuizIndex(0);
+                  }}
                 >
                   下一步
                   <ArrowRight className="ml-2 size-4" />
@@ -256,66 +292,123 @@ export function ConstitutionWorkbench() {
               </div>
             </section>
           ) : (
-            <section className="shrink-0 space-y-5">
-              <LikertRow
-                label="近期是否容易疲乏？"
-                hint="指体力或精神不振、恢复慢的主观感受。"
-                value={energy}
-                onChange={setEnergy}
-              />
-              <LikertRow
-                label="是否比旁人更怕冷？"
-                hint="在相同环境下畏寒、喜暖的程度。"
-                value={coldIntolerance}
-                onChange={setColdIntolerance}
-              />
-              <LikertRow
-                label="睡眠是否易浅、多梦或难入睡？"
-                hint="以近两周整体情况为准。"
-                value={sleep}
-                onChange={setSleep}
-              />
-              <LikertRow
-                label="脘腹是否常有不适（胀、满、隐痛）？"
-                hint="与饮食或情绪相关的胃肠主观不适。"
-                value={digestion}
-                onChange={setDigestion}
-              />
+            <section className="relative flex min-h-[min(28rem,62dvh)] flex-col">
+              <div className="mb-6 flex items-center justify-between gap-3">
+                <p className="font-sans text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+                  第 {quizIndex + 1} / {QUESTIONS.length} 题
+                </p>
+                <div className="flex gap-1.5">
+                  {QUESTIONS.map((_, i) => (
+                    <span
+                      key={i}
+                      className={cn(
+                        "h-1.5 w-6 rounded-full transition",
+                        i === quizIndex
+                          ? "bg-primary"
+                          : i < quizIndex
+                            ? "bg-primary/35"
+                            : "bg-muted/60",
+                      )}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentQuestion.key}
+                  initial={{ opacity: 0, x: 28 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-1 flex-col rounded-[2rem] border border-border/50 bg-gradient-to-b from-card/95 to-background/30 p-6 shadow-sm sm:p-10"
+                >
+                  <div className="flex flex-1 flex-col justify-center space-y-8">
+                    <div className="space-y-3 text-center sm:text-left">
+                      <p className="font-serif text-[clamp(1.25rem,3.2vw,1.65rem)] font-medium leading-snug tracking-[0.08em] text-foreground">
+                        {currentQuestion.label}
+                      </p>
+                      <p className="font-sans text-sm leading-relaxed text-muted-foreground">
+                        {currentQuestion.hint}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          onClick={() =>
+                            setAnswers((prev) => ({
+                              ...prev,
+                              [currentQuestion.key]: n,
+                            }))
+                          }
+                          className={cn(
+                            "h-14 min-w-[3.25rem] rounded-2xl px-4 text-base font-semibold tabular-nums transition sm:h-16 sm:min-w-[3.5rem]",
+                            answerVal === n
+                              ? "scale-[1.02] bg-primary text-primary-foreground shadow-md"
+                              : "bg-muted/45 text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+                          )}
+                        >
+                          {n}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-center font-sans text-[11px] text-muted-foreground sm:text-left">
+                      1 几乎没有 · 5 非常明显
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
 
               {error ? (
-                <p className="rounded-2xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                <p className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
                   {error}
                 </p>
               ) : null}
 
-              <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-between">
+              <div className="mt-8 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
                 <Button
                   type="button"
                   variant="ghost"
                   className="h-12 rounded-2xl px-4"
-                  onClick={() => setWizardStep(1)}
+                  onClick={() => {
+                    if (quizIndex === 0) setWizardStep(1);
+                    else setQuizIndex((i) => i - 1);
+                  }}
                 >
                   <ArrowLeft className="mr-2 size-4" />
-                  上一步
+                  {quizIndex === 0 ? "上一步（舌象）" : "上一题"}
                 </Button>
-                <Button
-                  type="button"
-                  disabled={loading}
-                  className="h-12 rounded-2xl px-8 shadow-sm"
-                  onClick={() => void onSubmit()}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 size-4 animate-spin" aria-hidden />
-                      分析中…
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="mr-2 size-4" aria-hidden />
-                      生成体质报告
-                    </>
-                  )}
-                </Button>
+                {quizIndex < QUESTIONS.length - 1 ? (
+                  <Button
+                    type="button"
+                    className="h-12 rounded-2xl px-8 shadow-sm"
+                    onClick={() => setQuizIndex((i) => i + 1)}
+                  >
+                    下一题
+                    <ArrowRight className="ml-2 size-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    disabled={loading}
+                    className="h-12 rounded-2xl px-8 shadow-sm"
+                    onClick={() => void onSubmit()}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 size-4 animate-spin" aria-hidden />
+                        分析中…
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="mr-2 size-4" aria-hidden />
+                        生成体质报告
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
             </section>
           )}
@@ -323,7 +416,7 @@ export function ConstitutionWorkbench() {
           <IntegrationDetails>
             <p>
               已配置公网地址时，请求 <code className="rounded bg-muted/80 px-1">POST /v1/constitution/screening</code>{" "}
-             （multipart：<code className="rounded bg-muted/80 px-1">tongue_image</code>、
+              （multipart：<code className="rounded bg-muted/80 px-1">tongue_image</code>、
               <code className="rounded bg-muted/80 px-1">questionnaire</code> JSON）。
             </p>
             <p className="mt-2">
@@ -337,11 +430,33 @@ export function ConstitutionWorkbench() {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h2 className="font-serif text-xl font-medium text-foreground">您的体质倾向</h2>
-              <p className="mt-1 text-sm text-muted-foreground">以下为模型综合舌象与量表的示意输出。</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                雷达图为模型综合舌象与量表的示意输出。
+              </p>
             </div>
-            <Button type="button" variant="outline" className="h-11 rounded-xl" onClick={resetAll}>
-              重新测评
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                className="h-11 rounded-xl gap-2"
+                disabled={exporting}
+                onClick={() => void handleExportHeirloom()}
+              >
+                {exporting ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden />
+                ) : (
+                  <Download className="size-4" aria-hidden />
+                )}
+                传家体质笺
+              </Button>
+              <Button type="button" variant="outline" className="h-11 rounded-xl" onClick={resetAll}>
+                重新测评
+              </Button>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-border/50 bg-background/40 p-4 sm:p-6">
+            <ConstitutionRadarChart data={radarData} />
           </div>
 
           <ul className="space-y-4">
@@ -354,9 +469,11 @@ export function ConstitutionWorkbench() {
                     <span className="tabular-nums text-muted-foreground">{pct.toFixed(0)}%</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-muted/60">
-                    <div
-                      className="h-full rounded-full bg-primary/80 transition-[width] duration-700 ease-out"
-                      style={{ width: `${Math.min(100, pct)}%` }}
+                    <motion.div
+                      className="h-full rounded-full bg-primary/80"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min(100, pct)}%` }}
+                      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
                     />
                   </div>
                 </li>
@@ -376,6 +493,15 @@ export function ConstitutionWorkbench() {
             </div>
           ) : null}
         </section>
+      ) : null}
+
+      {result ? (
+        <div
+          className="pointer-events-none fixed left-[-10000px] top-0 z-[-1]"
+          aria-hidden
+        >
+          <ConstitutionHeirloomReport ref={reportRef} result={result} radarData={radarData} />
+        </div>
       ) : null}
     </div>
   );

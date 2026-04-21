@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
+import { Atmosphere } from "@/components/background/Atmosphere";
+import { useSeasonTheme } from "@/hooks/useSeasonTheme";
 import { cn } from "@/lib/utils";
 
 import { AppWorkspaceDock } from "./AppWorkspaceDock";
@@ -15,6 +17,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isLogin = pathname === "/login";
   const isMuseumHome = pathname === "/";
+  const { season } = useSeasonTheme();
 
   const shellPadding = !isMuseumHome && !isLogin;
 
@@ -28,6 +31,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           "h-[100dvh] max-h-[100dvh] overflow-hidden app-safe-padding sm:gap-1",
       )}
     >
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <Atmosphere
+          season={season}
+          layout={isMuseumHome ? "extended" : "viewport"}
+        />
+      </div>
       {!isMuseumHome ? (
         <div
           className="pointer-events-none absolute inset-0 opacity-40"
@@ -42,10 +51,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         {isLogin ? (
           <motion.div
             key="route-login"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, filter: "blur(14px)", y: 18 }}
+            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+            exit={{ opacity: 0, filter: "blur(10px)", y: -12 }}
+            transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-10 flex h-full min-h-0 w-full min-w-0 items-center justify-center"
           >
             {children}
@@ -53,10 +62,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         ) : isMuseumHome ? (
           <motion.div
             key="route-museum"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, filter: "blur(12px)", y: 22 }}
+            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+            exit={{ opacity: 0, filter: "blur(10px)", y: -16 }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-10 w-full min-w-0"
           >
             {children}
@@ -64,10 +73,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         ) : (
           <motion.div
             key="route-app"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, filter: "blur(12px)", y: 16 }}
+            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+            exit={{ opacity: 0, filter: "blur(10px)", y: -14 }}
+            transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-10 flex h-full min-h-0 w-full min-w-0 gap-0 overflow-hidden lg:gap-3"
           >
             <Sidebar />
@@ -77,10 +86,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={pathname}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                    initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -14, filter: "blur(8px)" }}
+                    transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
                     className="h-full min-h-0"
                   >
                     {children}

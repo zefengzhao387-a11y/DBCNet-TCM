@@ -1,10 +1,8 @@
 "use client";
 
 import { LayoutGroup } from "framer-motion";
-import { useEffect } from "react";
 
-import { Atmosphere } from "@/components/background/Atmosphere";
-import { useSeasonTheme } from "@/hooks/useSeasonTheme";
+import { DietMomentsFeed } from "@/components/wellness/DietMomentsFeed";
 
 import { MuseumCoreModules } from "./MuseumCoreModules";
 import { MuseumDailySeason } from "./MuseumDailySeason";
@@ -13,27 +11,8 @@ import { MuseumMobileDock } from "./MuseumMobileDock";
 import { MuseumNav } from "./MuseumNav";
 
 export function MuseumLanding() {
-  const { season } = useSeasonTheme();
-
-  useEffect(() => {
-    return () => {
-      const root = document.documentElement;
-      root.classList.remove(
-        "season-spring",
-        "season-summer",
-        "season-autumn",
-        "season-winter",
-      );
-      delete root.dataset.season;
-    };
-  }, []);
-
   return (
     <div className="museum-ambient museum-airy relative min-h-screen text-stone-800">
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-x-hidden overflow-y-hidden">
-        <Atmosphere season={season} />
-      </div>
-
       <LayoutGroup id="dbcnet-museum-landing">
         <main
           id="museum-home"
@@ -47,6 +26,7 @@ export function MuseumLanding() {
             <MuseumHero />
           </section>
           <MuseumDailySeason />
+          <DietMomentsFeed className="pb-20 pt-6 sm:pb-28 sm:pt-10" />
           <MuseumCoreModules />
         </main>
         <MuseumMobileDock />

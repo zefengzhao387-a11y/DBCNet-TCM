@@ -1,27 +1,36 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookOpen, Camera, Home, PanelLeft, Stethoscope, UserRound } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { BookOpen, Camera, Home, PanelLeft, Star, Stethoscope, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
+import { useFavoritesStore } from "@/stores/favorites-store";
 import { useUIStore } from "@/stores/ui-store";
 
-const nav = [
+const nav: {
+  href: string;
+  icon: LucideIcon;
+  label: string;
+  anchorId?: string;
+}[] = [
   { href: "/", icon: Home, label: "展厅首页" },
   { href: "/clinical", icon: Stethoscope, label: "临床决策" },
   { href: "/constitution", icon: Camera, label: "体质辨识" },
   { href: "/knowledge", icon: BookOpen, label: "知识库" },
-] as const;
+  { href: "/favorites", icon: Star, label: "收藏", anchorId: "favorites-nav-anchor" },
+];
 
 export function Sidebar() {
   const pathname = usePathname();
   const expanded = useUIStore((s) => s.sidebarExpanded);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const user = useAuthStore((s) => s.user);
+  const favCount = useFavoritesStore((s) => s.items.length);
 
   return (
     <>
@@ -61,7 +70,7 @@ export function Sidebar() {
                 className="block truncate text-sm font-semibold tracking-tight text-foreground transition hover:text-primary"
                 title="返回展厅首页"
               >
-                黄岐智鉴
+                岐黄智鉴
               </Link>
             </motion.div>
           ) : null}
@@ -78,7 +87,7 @@ export function Sidebar() {
         </div>
 
         <nav className="flex flex-1 flex-col gap-1" aria-label="主导航">
-          {nav.map(({ href, icon: Icon, label }) => {
+          {nav.map(({ href, icon: Icon, label, anchorId }) => {
             const active =
               href === "/"
                 ? pathname === "/"
@@ -95,7 +104,11 @@ export function Sidebar() {
                 )}
                 title={label}
               >
-                <Link href={href} className="flex w-full min-w-0 items-center gap-3">
+                <Link
+                  href={href}
+                  id={anchorId}
+                  className="relative flex w-full min-w-0 items-center gap-3"
+                >
                   <Icon className="size-[1.125rem] shrink-0 text-season-accent" />
                   {expanded ? (
                     <motion.span
@@ -106,6 +119,11 @@ export function Sidebar() {
                     >
                       {label}
                     </motion.span>
+                  ) : null}
+                  {href === "/favorites" && favCount > 0 && expanded ? (
+                    <span className="ml-auto rounded-full bg-amber-500/20 px-2 py-0.5 font-sans text-[10px] font-semibold tabular-nums text-amber-800 dark:text-amber-100">
+                      {favCount > 99 ? "99+" : favCount}
+                    </span>
                   ) : null}
                 </Link>
               </Button>

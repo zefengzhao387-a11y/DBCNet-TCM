@@ -29,7 +29,7 @@ function TitleSeal() {
         }}
       >
         <span className="select-none font-serif text-[7.5px] font-medium leading-[1.45] tracking-[0.08em] text-white/95 [writing-mode:vertical-rl]">
-          黄岐智鉴
+          岐黄智鉴
         </span>
       </motion.div>
     </motion.div>
@@ -65,7 +65,7 @@ export function MuseumHero() {
           className="max-w-[min(92vw,38rem)] text-center sm:text-left"
         >
           <p className="font-serif text-[clamp(1.85rem,5vw,3.1rem)] font-medium leading-[1.15] tracking-[0.14em] text-stone-800">
-            黄岐智鉴
+            岐黄智鉴
           </p>
           <p className="mt-6 font-serif text-[clamp(1.35rem,3.4vw,2.1rem)] font-normal leading-snug tracking-[0.2em] text-stone-600">
             双分支辨证与可解释图谱
@@ -105,7 +105,7 @@ export function MuseumHero() {
           variant="outline"
           className="h-12 min-h-[48px] w-full rounded-full border border-stone-200/90 bg-white/50 px-9 text-[13.5px] font-medium tracking-wide text-stone-600 shadow-sm backdrop-blur-sm transition duration-300 hover:border-stone-300 hover:bg-white/80 hover:text-stone-800 active:scale-[0.99] sm:w-auto sm:min-w-[11.5rem]"
         >
-          <Link href="#modules">浏览核心模块</Link>
+          <Link href="#home-bento">浏览展厅格架</Link>
         </Button>
       </motion.div>
     </div>
