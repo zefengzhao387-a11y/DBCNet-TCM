@@ -9,6 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { FavoriteStarButton } from "@/components/favorites/FavoriteStarButton";
 import { getDailyTcmForDate } from "@/data/daily-tcm";
@@ -26,7 +27,12 @@ function formatZhCalendar(d: Date): string {
 }
 
 export function MuseumDailySeason() {
-  const now = new Date();
+  /** 避免 SSR 与客户端时区/日期不一致导致 hydration 失败 */
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    setNow(new Date());
+  }, []);
+
   const {
     season,
     seasonZh,
@@ -35,8 +41,8 @@ export function MuseumDailySeason() {
     calendarSeasonHint,
   } = useSeasonTheme();
 
-  const daily = getDailyTcmForDate(now);
-  const solar = getSolarTermName(now);
+  const daily = now ? getDailyTcmForDate(now) : null;
+  const solar = now ? getSolarTermName(now) : null;
   const wellness = SEASONAL_WELLNESS[season];
 
   return (
@@ -53,32 +59,37 @@ export function MuseumDailySeason() {
           className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between lg:gap-6"
         >
           <div className="flex min-w-0 flex-1 flex-col gap-2">
-            <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.28em] text-stone-400 lg:hidden">
+            <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.28em] text-stone-500 lg:hidden">
               Rhythm · 时令场域
             </p>
-            <div className="scrollbar-hide -mx-1 flex max-w-full flex-nowrap items-center gap-2 overflow-x-auto px-1 pb-0.5 font-sans text-[12px] text-stone-500 sm:text-[13px] lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0 lg:pb-0">
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-stone-200/80 bg-white/70 px-3 py-1.5 shadow-sm sm:py-1">
-                <CalendarDays className="size-3.5 text-stone-400" aria-hidden />
-                <span className="text-stone-600">{formatZhCalendar(now)}</span>
+            <div className="scrollbar-hide -mx-1 flex max-w-full flex-nowrap items-center gap-2 overflow-x-auto px-1 pb-0.5 font-sans text-[12px] text-stone-600 sm:text-[13px] lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0 lg:pb-0">
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-stone-300/85 bg-white/78 px-3 py-1.5 shadow-sm sm:py-1">
+                <CalendarDays className="size-3.5 text-stone-500" aria-hidden />
+                <span className="text-stone-600" suppressHydrationWarning>
+                  {now ? formatZhCalendar(now) : "载入本机日期…"}
+                </span>
               </span>
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-stone-200/80 bg-white/70 px-3 py-1.5 shadow-sm sm:py-1">
-                <Sparkles className="size-3.5 text-[color-mix(in_srgb,var(--season-accent)_45%,#78716c)]" aria-hidden />
-                节气（公历近似）· <strong className="font-medium text-stone-700">{solar}</strong>
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-stone-300/85 bg-white/78 px-3 py-1.5 shadow-sm sm:py-1">
+                <Sparkles className="size-3.5 text-[color-mix(in_srgb,var(--season-accent)_52%,#6b6560)]" aria-hidden />
+                节气（公历近似）·{" "}
+                <strong className="font-medium text-stone-700" suppressHydrationWarning>
+                  {solar ?? "…"}
+                </strong>
               </span>
             </div>
           </div>
           <div className="flex min-w-0 flex-col items-start gap-1.5 lg:max-w-sm lg:items-end">
-            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-stone-400">
+            <p className="font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-stone-500">
               四时 · 界面主题
             </p>
-            <p className="text-left font-serif text-[15px] font-medium tracking-[0.06em] text-stone-800 lg:text-right">
-              当前为 <strong className="text-[color-mix(in_srgb,var(--season-accent)_55%,#44403c)]">{seasonZh}</strong>
+            <p className="text-left font-serif text-[15px] font-medium tracking-[0.06em] text-[#2f3832] lg:text-right">
+              当前为 <strong className="text-[color-mix(in_srgb,var(--season-accent)_58%,#3f3a36)]">{seasonZh}</strong>
               季 · {label}
             </p>
-            <p className="max-w-md text-left font-sans text-[12px] leading-relaxed text-stone-500 sm:text-[12.5px] lg:text-right">
-              主题皮肤：<span className="font-medium text-stone-700">{themeSkinLabel}</span>
+            <p className="max-w-md text-left font-sans text-[12px] leading-relaxed text-stone-600 sm:text-[12.5px] lg:text-right">
+              主题皮肤：<span className="font-medium text-stone-800">{themeSkinLabel}</span>
             </p>
-            <p className="max-w-md text-left font-sans text-[11px] leading-relaxed text-stone-400 lg:text-right">
+            <p className="max-w-md text-left font-sans text-[11px] leading-relaxed text-stone-500 lg:text-right">
               {calendarSeasonHint}
             </p>
           </div>
@@ -99,26 +110,30 @@ export function MuseumDailySeason() {
                   每日一词
                 </h2>
               </div>
-              <FavoriteStarButton
-                className="shrink-0 text-stone-500 hover:bg-white/50"
-                item={{
-                  id: `term-${encodeURIComponent(daily.term)}`,
-                  kind: "term",
-                  title: daily.term,
-                  subtitle: daily.gloss.slice(0, 72),
-                  tags: ["每日一词", seasonZh],
-                }}
-                label="收藏词条"
-              />
+              {daily ? (
+                <FavoriteStarButton
+                  className="shrink-0 text-stone-500 hover:bg-white/50"
+                  item={{
+                    id: `term-${encodeURIComponent(daily.term)}`,
+                    kind: "term",
+                    title: daily.term,
+                    subtitle: daily.gloss.slice(0, 72),
+                    tags: ["每日一词", seasonZh],
+                  }}
+                  label="收藏词条"
+                />
+              ) : (
+                <span className="inline-flex size-10 shrink-0" aria-hidden />
+              )}
             </div>
             <p className="font-serif text-[clamp(1.75rem,4vw,2.35rem)] font-medium tracking-[0.14em] text-stone-800">
-              {daily.term}
+              {daily?.term ?? "…"}
             </p>
-            {daily.reading ? (
+            {daily?.reading ? (
               <p className="mt-2 font-sans text-[13px] text-stone-400">{daily.reading}</p>
             ) : null}
             <p className="mt-5 flex-1 font-sans text-[14px] font-light leading-[1.85] text-stone-600">
-              {daily.gloss}
+              {daily?.gloss ?? "正在载入当日词条…"}
             </p>
           </motion.article>
 

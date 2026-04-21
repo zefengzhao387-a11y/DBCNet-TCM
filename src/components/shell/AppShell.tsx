@@ -2,11 +2,12 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useLayoutEffect, type ReactNode } from "react";
 
 import { Atmosphere } from "@/components/background/Atmosphere";
 import { useSeasonTheme } from "@/hooks/useSeasonTheme";
 import { cn } from "@/lib/utils";
+import { useUIStore } from "@/stores/ui-store";
 
 import { AppWorkspaceDock } from "./AppWorkspaceDock";
 import { Sidebar } from "./Sidebar";
@@ -18,6 +19,14 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isLogin = pathname === "/login";
   const isMuseumHome = pathname === "/";
   const { season } = useSeasonTheme();
+  const setXaiOpen = useUIStore((s) => s.setXaiOpen);
+
+  /** 进入临床页默认展开逻辑链，避免右侧被裁切时误以为「没有面板」 */
+  useLayoutEffect(() => {
+    if (pathname === "/clinical") {
+      setXaiOpen(true);
+    }
+  }, [pathname, setXaiOpen]);
 
   const shellPadding = !isMuseumHome && !isLogin;
 
@@ -31,10 +40,17 @@ export function AppShell({ children }: { children: ReactNode }) {
           "h-[100dvh] max-h-[100dvh] overflow-hidden app-safe-padding sm:gap-1",
       )}
     >
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      <div
+        className={cn(
+          "pointer-events-none z-0 overflow-hidden translate-z-0 [backface-visibility:hidden]",
+          isMuseumHome
+            ? "absolute inset-0 min-h-full"
+            : "fixed inset-0",
+        )}
+      >
         <Atmosphere
           season={season}
-          layout={isMuseumHome ? "extended" : "viewport"}
+          layout={isMuseumHome ? "scroll" : "viewport"}
         />
       </div>
       {!isMuseumHome ? (
@@ -60,12 +76,16 @@ export function AppShell({ children }: { children: ReactNode }) {
             {children}
           </motion.div>
         ) : isMuseumHome ? (
+          /**
+           * 首页仅用 opacity 过场，避免对子节点使用 transform / filter（否则其内 `position: fixed`
+           * 的顶栏会相对本层定位，随 `overflow-y-auto` 一起滚动，无法贴在视口顶端）。
+           */
           <motion.div
             key="route-museum"
-            initial={{ opacity: 0, filter: "blur(12px)", y: 22 }}
-            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-            exit={{ opacity: 0, filter: "blur(10px)", y: -16 }}
-            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-10 w-full min-w-0"
           >
             {children}
@@ -97,7 +117,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </AnimatePresence>
               </main>
             </div>
-            <div className="relative z-10 h-full w-0 min-w-0 shrink-0 overflow-visible lg:overflow-hidden">
+            <div className="relative z-10 flex h-full min-w-0 shrink-0 overflow-visible">
               <XaiPanel />
             </div>
             <AppWorkspaceDock />

@@ -20,16 +20,16 @@ function TitleSeal() {
       aria-hidden
     >
       <motion.div
-        className="flex h-[5rem] w-9 items-center justify-center rounded-sm border border-[#c45c5c]/35 bg-gradient-to-b from-[#d47272]/95 via-[#b85656] to-[#9a4545] shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_6px_20px_rgba(90,42,42,0.12)] transition-shadow duration-500 group-hover/seal:border-[#b85c5c]/45 group-hover/seal:shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_8px_24px_rgba(90,42,42,0.14),0_0_20px_rgba(200,96,96,0.18)]"
-        animate={{ opacity: [0.65, 1, 0.65] }}
+        className="flex h-[5rem] w-9 items-center justify-center rounded-sm border border-rose-200/50 bg-gradient-to-b from-rose-100/95 via-rose-50/90 to-[#f4e8e8] shadow-[inset_0_1px_0_rgba(255,255,255,0.85),0_6px_22px_rgba(120,72,72,0.08)] transition-shadow duration-500 group-hover/seal:border-rose-200/70 group-hover/seal:shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_26px_rgba(120,72,72,0.1)]"
+        animate={{ opacity: [0.88, 1, 0.88] }}
         transition={{
           duration: 8,
           repeat: Infinity,
           ease: "easeInOut",
         }}
       >
-        <span className="select-none font-serif text-[7.5px] font-medium leading-[1.45] tracking-[0.08em] text-white/95 [writing-mode:vertical-rl]">
-          岐黄智鉴
+        <span className="select-none font-serif text-[7.5px] font-medium leading-[1.45] tracking-[0.08em] text-[#5c4a4a] [writing-mode:vertical-rl]">
+          岐黄智诊
         </span>
       </motion.div>
     </motion.div>
@@ -62,50 +62,41 @@ export function MuseumHero() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.16, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-[min(92vw,38rem)] text-center sm:text-left"
+          className="max-w-[min(92vw,40rem)] text-center sm:text-left"
         >
-          <p className="font-serif text-[clamp(1.85rem,5vw,3.1rem)] font-medium leading-[1.15] tracking-[0.14em] text-stone-800">
-            岐黄智鉴
+          <p className="font-serif text-[clamp(1.85rem,5vw,3.1rem)] font-medium leading-[1.18] tracking-[0.12em] text-[#2a322d]">
+            岐黄智诊
           </p>
-          <p className="mt-6 font-serif text-[clamp(1.35rem,3.4vw,2.1rem)] font-normal leading-snug tracking-[0.2em] text-stone-600">
-            双分支辨证与可解释图谱
+          <p className="mt-5 font-serif text-[clamp(1.05rem,2.8vw,1.45rem)] font-normal leading-[1.75] tracking-[0.08em] text-[#4a5750]">
+            让中医可感知，可解释，可持续
           </p>
-          <p className="mt-3 font-display text-[clamp(0.62rem,1.65vw,0.78rem)] font-medium uppercase tracking-[0.38em] text-stone-400/95">
-            DBCNet · Multimodal TCM
+          <p className="mt-6 max-w-[min(92vw,34rem)] text-pretty text-center font-sans text-[clamp(0.95rem,2.55vw,1.2rem)] font-normal leading-[1.68] tracking-[0.03em] text-[#5a645c] sm:max-w-[30rem] sm:text-left">
+            基于多模态感知的中医大模型辅助诊断系统
           </p>
         </motion.div>
         <TitleSeal />
       </motion.div>
 
-      <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.24, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="mx-auto mt-11 max-w-md text-pretty font-sans text-[15px] font-light leading-[1.95] text-stone-500 sm:max-w-lg sm:text-[15.5px]"
-      >
-        跨越千年的东方生命观，在此以光、雾与数据，重构成一座可步入的展厅。
-      </motion.p>
-
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.32, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ delay: 0.28, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="mt-14 flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-4"
       >
         <Button
           asChild
           size="lg"
-          className="h-12 min-h-[48px] w-full rounded-full border border-[color-mix(in_srgb,var(--season-accent)_28%,transparent)] bg-[color-mix(in_srgb,var(--season-accent)_14%,white)] px-9 text-[13.5px] font-medium tracking-wide text-stone-800 shadow-sm transition duration-300 hover:bg-[color-mix(in_srgb,var(--season-accent)_22%,white)] active:scale-[0.99] sm:w-auto sm:min-w-[11.5rem]"
+          className="h-12 min-h-[48px] w-full rounded-full border border-[color-mix(in_srgb,var(--season-accent)_32%,#d6d3d1)] bg-[color-mix(in_srgb,var(--season-accent)_12%,#ffffff)] px-9 text-[13.5px] font-medium tracking-wide text-[#2f3832] shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_6px_20px_rgba(42,50,44,0.06)] transition duration-300 hover:bg-[color-mix(in_srgb,var(--season-accent)_18%,#ffffff)] hover:text-[#1f2924] active:scale-[0.99] sm:w-auto sm:min-w-[12rem]"
         >
-          <Link href="/clinical">进入临床决策支持</Link>
+          <Link href="/constitution">多模态体质识别</Link>
         </Button>
         <Button
           asChild
           size="lg"
           variant="outline"
-          className="h-12 min-h-[48px] w-full rounded-full border border-stone-200/90 bg-white/50 px-9 text-[13.5px] font-medium tracking-wide text-stone-600 shadow-sm backdrop-blur-sm transition duration-300 hover:border-stone-300 hover:bg-white/80 hover:text-stone-800 active:scale-[0.99] sm:w-auto sm:min-w-[11.5rem]"
+          className="h-12 min-h-[48px] w-full rounded-full border border-stone-300/95 bg-white/70 px-9 text-[13.5px] font-medium tracking-wide text-[#3d4a42] shadow-sm backdrop-blur-sm transition duration-300 hover:border-stone-400/90 hover:bg-white/92 hover:text-[#2a332e] active:scale-[0.99] sm:w-auto sm:min-w-[12rem]"
         >
-          <Link href="#home-bento">浏览展厅格架</Link>
+          <Link href="#home-bento">浏览核心功能</Link>
         </Button>
       </motion.div>
     </div>

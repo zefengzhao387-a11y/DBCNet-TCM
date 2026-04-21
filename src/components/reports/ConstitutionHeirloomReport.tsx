@@ -31,7 +31,7 @@ export const ConstitutionHeirloomReport = forwardRef<
     >
       <header className="border-b border-stone-300/60 pb-5 text-center">
         <p className="text-[11px] font-medium uppercase tracking-[0.35em] text-stone-500">
-          岐黄智鉴
+          岐黄智诊
         </p>
         <h1 className="mt-2 text-[1.35rem] font-medium tracking-[0.18em] text-stone-800">
           传家体质笺
@@ -86,7 +86,7 @@ export const ConstitutionHeirloomReport = forwardRef<
         <p className="font-sans text-[10px] leading-relaxed text-stone-400">
           本笺为体质倾向示意，非医疗诊断。
           <br />
-          岐黄智鉴 · 多模态体质辨识
+          岐黄智诊 · 多模态体质辨识
         </p>
       </footer>
     </div>

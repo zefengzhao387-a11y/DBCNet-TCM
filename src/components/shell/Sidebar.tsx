@@ -70,7 +70,7 @@ export function Sidebar() {
                 className="block truncate text-sm font-semibold tracking-tight text-foreground transition hover:text-primary"
                 title="返回展厅首页"
               >
-                岐黄智鉴
+                岐黄智诊
               </Link>
             </motion.div>
           ) : null}

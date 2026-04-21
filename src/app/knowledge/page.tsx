@@ -4,7 +4,7 @@ import { BookOpen, Library, Search } from "lucide-react";
 import { KnowledgeBookmarkStrip } from "@/components/knowledge/KnowledgeBookmarkStrip";
 
 export const metadata: Metadata = {
-  title: "知识库 · 岐黄智鉴",
+  title: "知识库 · 岐黄智诊",
   description: "方药、典籍与术语索引占位；可后续对接检索服务或静态语料。",
 };
 

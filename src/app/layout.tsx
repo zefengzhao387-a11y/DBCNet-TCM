@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Cinzel, Noto_Serif_SC } from "next/font/google";
 import localFont from "next/font/local";
 
-import { FilmGrain } from "@/components/background/FilmGrain";
 import { AppShell } from "@/components/shell/AppShell";
 import { SEASON_INLINE_INIT } from "@/lib/season-inline-script";
 
@@ -34,9 +33,9 @@ const notoSerifSC = Noto_Serif_SC({
 });
 
 export const metadata: Metadata = {
-  title: "岐黄智鉴 · 多模态中医智能决策",
+  title: "岐黄智诊 · 多模态中医智能辅助",
   description:
-    "DBCNet 双分支（生成式感知 + 知识图谱约束）与舌象、问卷等多模态体质辨识的可视化入口。",
+    "让中医可感知、可解释、可持续。基于多模态感知的中医大模型辅助诊断与体质辨识入口。",
 };
 
 export const viewport: Viewport = {
@@ -44,7 +43,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#eef6f2" },
+    { media: "(prefers-color-scheme: light)", color: "#e5efe8" },
     { media: "(prefers-color-scheme: dark)", color: "#08090a" },
   ],
 };
@@ -63,7 +62,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${notoSerifSC.variable} min-h-screen font-sans antialiased`}
       >
         <AppShell>{children}</AppShell>
-        <FilmGrain />
       </body>
     </html>
   );

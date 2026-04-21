@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Home, LogOut, Network, Search } from "lucide-react";
+import { Home, LogOut, Search, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -96,10 +96,11 @@ export function Topbar() {
           variant={xaiOpen ? "secondary" : "outline"}
           size="sm"
           className="h-11 min-h-11 shrink-0 gap-2 rounded-xl border-dashed px-3 sm:h-9 sm:min-h-0"
+          title={xaiOpen ? "收起右侧逻辑链" : "展开逻辑链面板"}
           onClick={toggleXai}
         >
-          <Network className="size-4 shrink-0" />
-          <span className="hidden sm:inline">XAI 溯源</span>
+          <Sparkles className="size-4 shrink-0 text-season-accent" />
+          <span className="hidden sm:inline">逻辑链</span>
         </Button>
       </div>
     </motion.header>

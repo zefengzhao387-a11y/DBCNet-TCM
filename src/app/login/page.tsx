@@ -64,7 +64,7 @@ export default function LoginPage() {
     >
       <div className="mb-10 space-y-2 text-center">
         <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.42em] text-muted-foreground">
-          岐黄智鉴
+          岐黄智诊
         </p>
         <h1 className="font-serif text-2xl font-medium tracking-[0.2em] text-foreground">
           入室

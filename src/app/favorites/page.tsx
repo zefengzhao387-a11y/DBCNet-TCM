@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { FavoritesTimeline } from "@/components/favorites/FavoritesTimeline";
 
 export const metadata: Metadata = {
-  title: "我的收藏 · 岐黄智鉴",
+  title: "我的收藏 · 岐黄智诊",
   description: "方剂、词条与膳食灵感收藏时光轴。",
 };
 

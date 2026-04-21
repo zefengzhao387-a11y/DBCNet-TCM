@@ -1,67 +1,80 @@
 "use client";
 
-import {
-  motion,
-  useMotionValue,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
-import { useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
+import { useMemo } from "react";
 
 import type { Season } from "@/types/season";
 
+import { FlowFieldCanvas } from "./FlowFieldCanvas";
 import { QiFlow } from "./QiFlow";
-
-const STARDUST_COUNT = 72;
 
 type AtmosphereProps = {
   season: Season;
-  /** 首页长卷用 extended；工作台等固定视口用 viewport */
-  layout?: "extended" | "viewport";
+  /** scroll：随页面高度铺底的长布；viewport：固定视口；extended：超高画布（旧式 fixed 场景） */
+  layout?: "scroll" | "extended" | "viewport";
 };
 
-/** 竖向只做极弱明度起伏，四时与「竹青 / 朱荷 / 银杏金 / 墨色」氛围一致 */
-function skyBackground(season: Season): string {
+/** 基底：多段柔过渡，避免出现「一道杠」硬边 */
+function skyBase(season: Season): string {
   switch (season) {
     case "spring":
-      return "linear-gradient(180deg, #f4faf7 0%, #eef6f2 32%, #e8f2ec 68%, #e2ede6 100%)";
+      return "linear-gradient(185deg, #f4f9f6 0%, #edf5f0 12%, #e6f0ea 28%, #dfebe4 48%, #d8e5de 68%, #d2e0d8 88%, #ccdcd4 100%)";
     case "summer":
-      return "linear-gradient(180deg, #fcf9f6 0%, #f8f2ec 38%, #f3ebe4 72%, #efe6dc 100%)";
+      return "linear-gradient(185deg, #faf4ee 0%, #f5ede4 14%, #f0e6da 32%, #eadfd0 50%, #e4d8c6 70%, #dfd2be 88%, #d9ccb6 100%)";
     case "autumn":
-      return "linear-gradient(180deg, #fcf9f2 0%, #f8f2e6 38%, #f2e9d8 72%, #ebe0cc 100%)";
+      return "linear-gradient(185deg, #f7f0e4 0%, #f2e9da 14%, #ede2d0 32%, #e7d9c6 50%, #e1d2bc 70%, #dbcbb4 88%, #d5c4ac 100%)";
     case "winter":
-      return "linear-gradient(180deg, #121418 0%, #0e1014 38%, #0a0c10 72%, #060708 100%)";
+      return "linear-gradient(188deg, #14181c 0%, #101418 18%, #0c1014 40%, #080c10 62%, #050608 82%, #030405 100%)";
     default:
-      return "linear-gradient(180deg, #f4faf7 0%, #eef6f2 32%, #e8f2ec 68%, #e2ede6 100%)";
+      return "linear-gradient(185deg, #f4f9f6 0%, #edf5f0 12%, #e6f0ea 28%, #dfebe4 48%, #d8e5de 68%, #d2e0d8 88%, #ccdcd4 100%)";
   }
 }
 
-function stardustFill(season: Season): string {
+/** 漂浮的「奶油 / 水晕」层（径向叠化，推动感由 motion 完成） */
+function skyBloomA(season: Season): string {
   switch (season) {
     case "spring":
-      return "rgba(62, 108, 92, 0.42)";
+      return "radial-gradient(ellipse 85% 70% at 22% 18%, rgba(220, 244, 232, 0.38) 0%, rgba(200, 232, 218, 0.16) 42%, transparent 68%)";
     case "summer":
-      return "rgba(150, 72, 68, 0.4)";
+      return "radial-gradient(ellipse 80% 65% at 18% 22%, rgba(255, 220, 200, 0.28) 0%, rgba(245, 200, 185, 0.12) 45%, transparent 70%)";
     case "autumn":
-      return "rgba(140, 112, 68, 0.44)";
+      return "radial-gradient(ellipse 82% 68% at 25% 20%, rgba(240, 210, 160, 0.3) 0%, rgba(220, 185, 130, 0.12) 44%, transparent 68%)";
     case "winter":
-      return "rgba(180, 188, 210, 0.22)";
+      return "radial-gradient(ellipse 75% 60% at 30% 25%, rgba(90, 100, 120, 0.22) 0%, rgba(50, 55, 65, 0.08) 48%, transparent 72%)";
     default:
-      return "rgba(62, 108, 92, 0.42)";
+      return "radial-gradient(ellipse 85% 70% at 22% 18%, rgba(200, 232, 214, 0.55) 0%, transparent 68%)";
   }
 }
 
-type DustSpec = {
-  cx: number;
-  cy: number;
-  r: number;
-  base: number;
-  dur: number;
-  delay: number;
-  dx: number;
-  dy: number;
-};
+function skyBloomB(season: Season): string {
+  switch (season) {
+    case "spring":
+      return "radial-gradient(ellipse 90% 75% at 78% 72%, rgba(200, 232, 214, 0.3) 0%, rgba(175, 218, 198, 0.12) 46%, transparent 72%)";
+    case "summer":
+      return "radial-gradient(ellipse 88% 70% at 82% 68%, rgba(255, 190, 175, 0.22) 0%, rgba(230, 160, 150, 0.08) 50%, transparent 74%)";
+    case "autumn":
+      return "radial-gradient(ellipse 88% 72% at 75% 75%, rgba(220, 175, 120, 0.24) 0%, rgba(200, 155, 95, 0.1) 48%, transparent 74%)";
+    case "winter":
+      return "radial-gradient(ellipse 85% 70% at 70% 78%, rgba(70, 78, 95, 0.18) 0%, rgba(35, 40, 50, 0.07) 52%, transparent 76%)";
+    default:
+      return "radial-gradient(ellipse 90% 75% at 78% 72%, rgba(170, 215, 195, 0.42) 0%, transparent 72%)";
+  }
+}
+
+function skyBloomC(season: Season): string {
+  switch (season) {
+    case "spring":
+      return "radial-gradient(ellipse 70% 55% at 52% 48%, rgba(225, 244, 232, 0.22) 0%, transparent 62%)";
+    case "summer":
+      return "radial-gradient(ellipse 68% 52% at 48% 52%, rgba(255, 230, 215, 0.15) 0%, transparent 64%)";
+    case "autumn":
+      return "radial-gradient(ellipse 70% 54% at 50% 50%, rgba(235, 205, 150, 0.16) 0%, transparent 64%)";
+    case "winter":
+      return "radial-gradient(ellipse 65% 50% at 48% 45%, rgba(60, 68, 85, 0.14) 0%, transparent 68%)";
+    default:
+      return "radial-gradient(ellipse 70% 55% at 52% 48%, rgba(210, 235, 220, 0.28) 0%, transparent 62%)";
+  }
+}
 
 /**
  * 画布高于视口并向上、下各伸出一段，配合 scroll translateY 仍满屏不露边。
@@ -71,149 +84,150 @@ const CANVAS_EXTRA_VH = 85;
 
 export function Atmosphere({
   season,
-  layout = "extended",
+  layout = "viewport",
 }: AtmosphereProps) {
-  const { scrollY } = useScroll();
-  const particleScroll = useTransform(scrollY, (v) => v * 0.3);
-  const particleLayerY = useSpring(particleScroll, {
-    stiffness: 44,
-    damping: 34,
-    mass: 0.85,
-  });
+  const skyBaseLayer = useMemo(() => skyBase(season), [season]);
+  const bloomA = useMemo(() => skyBloomA(season), [season]);
+  const bloomB = useMemo(() => skyBloomB(season), [season]);
+  const bloomC = useMemo(() => skyBloomC(season), [season]);
 
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const mouseX = useSpring(mx, { stiffness: 32, damping: 24 });
-  const mouseY = useSpring(my, { stiffness: 32, damping: 24 });
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      mx.set((e.clientX / window.innerWidth - 0.5) * 30);
-      my.set((e.clientY / window.innerHeight - 0.5) * 24);
-    };
-    window.addEventListener("mousemove", onMove, { passive: true });
-    return () => window.removeEventListener("mousemove", onMove);
-  }, [mx, my]);
-
-  const stardust = useMemo(() => {
-    return Array.from({ length: STARDUST_COUNT }, (_, i) => {
-      const seed = ((i * 7919) % 1000) / 1000;
-      return {
-        cx: (Math.sin(i * 2.11) * 0.5 + 0.5) * 1200,
-        cy: (Math.cos(i * 1.87) * 0.5 + 0.5) * 900,
-        r: 0.26 + seed * 0.42,
-        base: 0.14 + (i % 7) * 0.03,
-        dur: 11 + (i % 9) * 1.6,
-        delay: (i % 18) * 0.32,
-        dx: (Math.sin(i * 0.73) * 10 + (i % 4)) * 0.55,
-        dy: (Math.cos(i * 0.91) * 8 + (i % 3)) * 0.55,
-      } satisfies DustSpec;
-    });
-  }, []);
-
-  const sky = useMemo(() => skyBackground(season), [season]);
-  const dustFill = useMemo(() => stardustFill(season), [season]);
-
+  const isScroll = layout === "scroll";
   const canvasMin =
     layout === "viewport"
       ? "100dvh"
-      : `calc(100dvh + ${CANVAS_EXTRA_VH * 2}vh)`;
-  const canvasTop = layout === "viewport" ? "0" : `-${CANVAS_EXTRA_VH}vh`;
+      : layout === "extended"
+        ? `calc(100dvh + ${CANVAS_EXTRA_VH * 2}vh)`
+        : "100%";
+  const canvasTop =
+    layout === "extended" ? `-${CANVAS_EXTRA_VH}vh` : "0";
+
+  const rootClass = isScroll
+    ? "pointer-events-none absolute inset-0 min-h-full w-full overflow-hidden isolate"
+    : "pointer-events-none absolute left-0 right-0 w-full overflow-hidden isolate";
 
   return (
     <div
-      className="pointer-events-none absolute left-0 right-0 w-full overflow-hidden"
-      style={{ top: canvasTop, minHeight: canvasMin }}
+      className={rootClass}
+      style={isScroll ? undefined : { top: canvasTop, minHeight: canvasMin }}
       aria-hidden
       data-season={season}
     >
-      <div className="absolute inset-0" style={{ background: sky }} />
+      <div className="absolute inset-0" style={{ background: skyBaseLayer }} />
+
+      {/* 长布经纬：极淡斜纹，随页面延伸 */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.055]"
+        style={{
+          backgroundImage: `
+            repeating-linear-gradient(
+              118deg,
+              color-mix(in srgb, var(--foreground) 14%, transparent) 0px,
+              transparent 1px,
+              transparent 5px,
+              color-mix(in srgb, var(--foreground) 10%, transparent) 6px,
+              transparent 7px,
+              transparent 11px
+            ),
+            repeating-linear-gradient(
+              32deg,
+              transparent 0px,
+              transparent 8px,
+              color-mix(in srgb, var(--primary) 8%, transparent) 9px,
+              transparent 10px,
+              transparent 20px
+            )
+          `,
+          mixBlendMode: "multiply",
+        }}
+      />
+
+      <motion.div
+        className="pointer-events-none absolute -inset-[42%] will-change-transform"
+        style={{
+          background: bloomA,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "185% 185%",
+          backgroundPosition: "50% 50%",
+        }}
+        animate={{
+          x: [-110, 96, -88, 104, -110],
+          y: [-56, 44, 58, -52, -56],
+          opacity: [0.48, 0.82, 0.55, 0.78, 0.48],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+      <motion.div
+        className="pointer-events-none absolute -inset-[44%] will-change-transform"
+        style={{
+          background: bloomB,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "225% 225%",
+          backgroundPosition: "76% 58%",
+        }}
+        animate={{
+          x: [72, -84, 64, -70, 72],
+          y: [36, -28, -44, 32, 36],
+          opacity: [0.42, 0.72, 0.5, 0.68, 0.42],
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1.2,
+        }}
+      />
+      <motion.div
+        className="pointer-events-none absolute -inset-[32%] will-change-transform"
+        style={{
+          background: bloomC,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "210% 210%",
+          backgroundPosition: "40% 36%",
+        }}
+        animate={{
+          x: [-40, 52, -48, 44, -40],
+          y: [28, -36, 22, -30, 28],
+          opacity: [0.35, 0.62, 0.4, 0.58, 0.35],
+        }}
+        transition={{
+          duration: 14,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2.4,
+        }}
+      />
 
       <QiFlow season={season} />
 
-      <motion.div className="absolute inset-0" style={{ y: particleLayerY }}>
-        <motion.svg
-          className="h-full w-full"
-          viewBox="0 0 1200 900"
-          preserveAspectRatio="none"
-          style={{ x: mouseX, y: mouseY }}
-        >
-          <g>
-            {stardust.map((p, i) => (
-              <motion.circle
-                key={`d-${i}`}
-                cx={p.cx}
-                cy={p.cy}
-                r={p.r}
-                fill={dustFill}
-                animate={{
-                  opacity: [p.base * 0.65, p.base * 2.75, p.base * 0.7],
-                  cx: [p.cx, p.cx + p.dx, p.cx - p.dx * 0.35, p.cx],
-                  cy: [p.cy, p.cy + p.dy, p.cy - p.dy * 0.4, p.cy],
-                }}
-                transition={{
-                  duration: p.dur,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: p.delay,
-                }}
-              />
-            ))}
-          </g>
-        </motion.svg>
-      </motion.div>
+      {/* 星尘层关闭：优先消除白闪，再逐步回加细节 */}
 
-      <motion.div
-        className="absolute inset-0"
-        style={{
-          background:
-            season === "winter"
-              ? "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 45%, rgba(255,255,255,0.02) 100%)"
-              : "linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 42%, rgba(255,255,255,0.05) 100%)",
-        }}
-        animate={{ opacity: [0.72, 0.88, 0.68, 0.84, 0.72] }}
-        transition={{
-          duration: 36,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-
-      <motion.div
-        className="pointer-events-none absolute -inset-[18%] opacity-[0.16] blur-[120px]"
+      <div
+        className="atmosphere-accent-a pointer-events-none absolute -inset-[22%]"
         style={{
           background:
             "radial-gradient(ellipse 70% 55% at 35% 45%, color-mix(in srgb, var(--season-accent) 48%, transparent), transparent 72%)",
-        }}
-        animate={{
-          x: ["-2%", "3%", "-1%", "-2%"],
-          y: ["0%", "-2%", "1%", "0%"],
-          scale: [1, 1.05, 0.98, 1],
-        }}
-        transition={{
-          duration: 72,
-          repeat: Infinity,
-          ease: "easeInOut",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "170% 170%",
+          backgroundPosition: "26% 30%",
         }}
       />
-      <motion.div
-        className="pointer-events-none absolute -inset-[18%] opacity-[0.14] blur-[130px]"
+      <div
+        className="atmosphere-accent-b pointer-events-none absolute -inset-[22%]"
         style={{
           background:
             "radial-gradient(ellipse 65% 50% at 70% 55%, color-mix(in srgb, var(--primary) 44%, transparent), transparent 75%)",
-        }}
-        animate={{
-          x: ["2%", "-3%", "1%", "2%"],
-          y: ["1%", "2%", "-1%", "1%"],
-          scale: [1, 0.97, 1.04, 1],
-        }}
-        transition={{
-          duration: 78,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 5,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "175% 175%",
+          backgroundPosition: "70% 28%",
         }}
       />
+
+      {/* 矢量流线：置于最上层，避免被气韵与高光盖住 */}
+      <FlowFieldCanvas season={season} />
     </div>
   );
 }

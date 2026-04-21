@@ -4,7 +4,7 @@
 export function FilmGrain() {
   return (
     <div
-      className="paper-grain-stack pointer-events-none fixed inset-0 z-[140]"
+      className="paper-grain-stack pointer-events-none fixed inset-0 z-[140] overflow-hidden"
       aria-hidden
     >
       <div
@@ -32,7 +32,7 @@ export function FilmGrain() {
         }}
       />
       <svg
-        className="paper-grain-noise absolute inset-0 h-full w-full opacity-[var(--paper-noise-opacity,0.042)] mix-blend-soft-light"
+        className="paper-grain-noise absolute inset-0 h-full w-full opacity-[var(--paper-noise-opacity,0.022)] mix-blend-normal"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>

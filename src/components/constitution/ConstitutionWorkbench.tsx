@@ -141,7 +141,7 @@ export function ConstitutionWorkbench() {
       await new Promise((r) => window.setTimeout(r, 400));
       await downloadElementAsPng(
         reportRef.current,
-        `岐黄智鉴-体质笺-${new Date().toISOString().slice(0, 10)}.png`,
+        `岐黄智诊-体质笺-${new Date().toISOString().slice(0, 10)}.png`,
       );
     } finally {
       setExporting(false);

@@ -50,7 +50,9 @@ export function FavoriteStarButton({
     if (willAdd) {
       startFlight(e.clientX, e.clientY);
     }
-    void animate(scope.current, { scale: [1, 1.18, 1] }, { duration: 0.32 });
+    if (scope.current) {
+      void animate(scope.current, { scale: [1, 1.18, 1] }, { duration: 0.32 });
+    }
   }
 
   return (

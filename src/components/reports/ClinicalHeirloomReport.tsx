@@ -36,7 +36,7 @@ export const ClinicalHeirloomReport = forwardRef<
     >
       <header className="border-b border-stone-300/60 pb-5 text-center">
         <p className="text-[11px] font-medium uppercase tracking-[0.35em] text-stone-500">
-          岐黄智鉴
+          岐黄智诊
         </p>
         <h1 className="mt-2 text-[1.35rem] font-medium tracking-[0.18em] text-stone-800">
           传家辨证笺
@@ -135,7 +135,7 @@ export const ClinicalHeirloomReport = forwardRef<
         <p className="font-sans text-[10px] leading-relaxed text-stone-400">
           本笺为健康科普示意，非医疗诊断；不适请就医。
           <br />
-          岐黄智鉴 · DBCNet · 多模态中医智能决策
+          岐黄智诊 · DBCNet · 多模态中医智能决策
         </p>
       </footer>
     </div>

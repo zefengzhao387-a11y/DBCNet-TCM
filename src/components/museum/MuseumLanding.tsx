@@ -12,11 +12,11 @@ import { MuseumNav } from "./MuseumNav";
 
 export function MuseumLanding() {
   return (
-    <div className="museum-ambient museum-airy relative min-h-screen text-stone-800">
+    <div className="museum-ambient museum-airy relative min-h-screen text-[#3a4540]">
       <LayoutGroup id="dbcnet-museum-landing">
         <main
           id="museum-home"
-          className="relative z-10 mx-auto flex w-full max-w-[min(100dvw,120rem)] flex-col museum-gutter-x pb-28 [text-rendering:optimizeLegibility] lg:pb-0"
+          className="relative z-10 mx-auto flex w-full max-w-[min(100%,120rem)] flex-col museum-gutter-x pb-28 [text-rendering:optimizeLegibility] lg:pb-0"
         >
           <MuseumNav />
           <section

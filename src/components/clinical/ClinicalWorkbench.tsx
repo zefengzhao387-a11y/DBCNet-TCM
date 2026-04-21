@@ -1,7 +1,7 @@
 "use client";
 
 import { Download, Loader2, Stethoscope } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { PrescriptionScrollCard } from "@/components/clinical/PrescriptionScrollCard";
 import { ClinicalHeirloomReport } from "@/components/reports/ClinicalHeirloomReport";
@@ -37,7 +37,7 @@ export function ClinicalWorkbench() {
 
   const seasonalHint = `${themeSkinLabel}；饮食有节，起居有常，情志舒畅为宜。`;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setXaiOpen(true);
   }, [setXaiOpen]);
 
@@ -85,7 +85,7 @@ export function ClinicalWorkbench() {
       await new Promise((r) => window.setTimeout(r, 500));
       await downloadElementAsPng(
         reportRef.current,
-        `岐黄智鉴-传家辨证笺-${new Date().toISOString().slice(0, 10)}.png`,
+        `岐黄智诊-传家辨证笺-${new Date().toISOString().slice(0, 10)}.png`,
       );
     } finally {
       setExporting(false);
@@ -267,7 +267,7 @@ export function ClinicalWorkbench() {
                   </div>
                 ) : null}
                 <p className="text-xs leading-relaxed text-muted-foreground">
-                  症状—证候—方药的连线与流光动效见右侧「逻辑链」面板；宽屏可并排对照阅读。
+                  症状—证候—方药的连线与流光在右侧「逻辑链」面板；若未看到，请点击顶栏「逻辑链」展开。
                 </p>
               </div>
             ) : null}
