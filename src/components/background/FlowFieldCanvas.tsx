@@ -25,19 +25,20 @@ function seasonMist(season: Season): Mist {
   }
 }
 
+/** 更舒缓的流场，略像液体里缓慢扰动 */
 function flowVelocity(
   x: number,
   y: number,
   tMs: number,
 ): { vx: number; vy: number } {
-  const k = 0.00265;
-  const wt = tMs * 0.00038;
+  const k = 0.0021;
+  const wt = tMs * 0.0001;
   const vx =
-    Math.sin(y * k + wt) * 1.4 +
-    Math.cos((x * 0.71 + y * 0.53) * k * 1.15 + wt * 1.05) * 0.62;
+    Math.sin(y * k + wt) * 1.2 +
+    Math.cos((x * 0.71 + y * 0.53) * k * 1.1 + wt * 0.95) * 0.48;
   const vy =
-    Math.cos(x * k - wt * 0.92) * 1.4 +
-    Math.sin((x * 0.61 - y * 0.74) * k * 1.12 - wt * 0.88) * 0.58;
+    Math.cos(x * k - wt * 0.88) * 1.2 +
+    Math.sin((x * 0.61 - y * 0.74) * k * 1.05 - wt * 0.82) * 0.45;
   const len = Math.hypot(vx, vy) + 1e-6;
   return { vx: vx / len, vy: vy / len };
 }
@@ -46,14 +47,21 @@ type MistParticle = {
   x: number;
   y: number;
   rHalo: number;
-  rCore: number;
   phase: number;
+  /** 远近层次 */
+  depth: number;
+  /** 尺寸差异 */
+  size: number;
+  /** 上浮感（气泡向上升） */
+  rise: number;
+  /** 高光在缘上的微小偏移，避免每颗一样 */
+  spec: number;
 };
 
 function particleCount(w: number, h: number): number {
   const area = Math.max(1, w * h);
-  const n = Math.floor(area / 13_500);
-  return Math.max(88, Math.min(168, n));
+  const n = Math.floor(area / 9_500);
+  return Math.max(56, Math.min(160, n));
 }
 
 function initParticles(w: number, h: number): MistParticle[] {
@@ -63,9 +71,12 @@ function initParticles(w: number, h: number): MistParticle[] {
     out.push({
       x: Math.random() * w,
       y: Math.random() * h,
-      rHalo: 5 + Math.random() * 6,
-      rCore: 1.0 + Math.random() * 1.35,
+      rHalo: 8.5 + Math.random() * 12,
       phase: Math.random() * Math.PI * 2,
+      depth: 0.5 + Math.random() * 0.5,
+      size: 0.85 + Math.random() * 0.28,
+      rise: 0.25 + Math.random() * 0.75,
+      spec: Math.random() * Math.PI * 2,
     });
   }
   return out;
@@ -82,9 +93,9 @@ export function FlowFieldCanvas({ season }: FlowFieldCanvasProps) {
     const canvas = canvasRef.current;
     if (!wrap || !canvas) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
@@ -96,6 +107,75 @@ export function FlowFieldCanvas({ season }: FlowFieldCanvasProps) {
     let raf = 0;
     const t0 = performance.now();
     let last = t0;
+
+    const drawFrame = (t: number) => {
+      const mist = mistRef.current;
+      const w = widthCss;
+      const h = heightCss;
+      if (w < 4 || h < 4 || particles.length === 0) return;
+
+      /** 在保持浅色的前提下向白微抬，更容易从渐变底上浮现 */
+      const air = 0.1;
+      const tr = Math.round(mist.r + (255 - mist.r) * air);
+      const tg = Math.round(mist.g + (255 - mist.g) * air);
+      const tb = Math.round(mist.b + (255 - mist.b) * air);
+      const isWinter = season === "winter";
+      const breathe = (p: MistParticle) => 0.95 + 0.05 * Math.sin(t * 0.00035 + p.phase);
+
+      ctx.clearRect(0, 0, w, h);
+
+      for (const p of particles) {
+        const br = breathe(p);
+        const s = p.size;
+        const rh = p.rHalo * br * s;
+        const aMul = p.depth * (0.96 + 0.04 * Math.sin(t * 0.0005 + p.phase * 1.1));
+
+        const aInner = 0.04 * aMul;
+        const aBody = 0.092 * aMul;
+        const aRim = 0.12 * aMul;
+        const whiteRim = (isWinter ? 0.12 : 0.14) * aMul;
+        const specA = 0.2 * aMul;
+
+        const gBody = ctx.createRadialGradient(
+          p.x,
+          p.y,
+          0,
+          p.x,
+          p.y,
+          Math.max(1, rh),
+        );
+        gBody.addColorStop(0, `rgba(${tr},${tg},${tb},${aInner * 0.55})`);
+        gBody.addColorStop(0.4, `rgba(${tr},${tg},${tb},${aInner * 0.95})`);
+        gBody.addColorStop(0.7, `rgba(${tr},${tg},${tb},${aBody})`);
+        gBody.addColorStop(0.86, `rgba(255,255,255,${whiteRim})`);
+        gBody.addColorStop(0.94, `rgba(${tr},${tg},${tb},${aRim})`);
+        gBody.addColorStop(1, `rgba(${tr},${tg},${tb},0)`);
+
+        ctx.fillStyle = gBody;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, rh, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 极淡描边，便于轮廓从背景里分出来
+        ctx.strokeStyle = `rgba(255,255,255,${(isWinter ? 0.1 : 0.08) * aMul})`;
+        ctx.lineWidth = 0.85;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, rh, 0, Math.PI * 2);
+        ctx.stroke();
+
+        const hx = p.x - Math.cos(p.spec) * rh * 0.28;
+        const hy = p.y - Math.sin(p.spec + 0.8) * rh * 0.3;
+        const hR = rh * 0.2;
+        const gSpec = ctx.createRadialGradient(hx, hy, 0, hx, hy, hR);
+        gSpec.addColorStop(0, `rgba(255,255,255,${specA * 0.95})`);
+        gSpec.addColorStop(0.5, `rgba(255,255,255,${specA * 0.28})`);
+        gSpec.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = gSpec;
+        ctx.beginPath();
+        ctx.arc(hx, hy, hR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    };
 
     const resize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 1.25);
@@ -114,6 +194,9 @@ export function FlowFieldCanvas({ season }: FlowFieldCanvasProps) {
       canvas.style.height = `${heightCss}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       particles = initParticles(widthCss, heightCss);
+      if (reduceMotion) {
+        drawFrame(performance.now() - t0);
+      }
     };
 
     const ro = new ResizeObserver(() => {
@@ -125,13 +208,18 @@ export function FlowFieldCanvas({ season }: FlowFieldCanvasProps) {
       resize();
     });
 
+    if (reduceMotion) {
+      return () => {
+        ro.disconnect();
+      };
+    }
+
     const step = (now: number) => {
       if (document.visibilityState === "hidden") {
         raf = requestAnimationFrame(step);
         return;
       }
 
-      const mist = mistRef.current;
       const t = now - t0;
       const dt = Math.min(40, now - last) / 16.67;
       last = now;
@@ -143,40 +231,25 @@ export function FlowFieldCanvas({ season }: FlowFieldCanvasProps) {
         return;
       }
 
-      const speed = season === "winter" ? 2.35 : 2.65;
-      const breathe = (p: MistParticle) =>
-        0.88 + 0.12 * Math.sin(t * 0.00055 + p.phase);
-
-      ctx.clearRect(0, 0, w, h);
-
-      const { r, g, b } = mist;
-      const haloA = season === "winter" ? 0.12 : 0.11;
-      const coreA = season === "winter" ? 0.22 : 0.19;
+      const speed = season === "winter" ? 0.56 : 0.65;
 
       for (const p of particles) {
-        const { vx, vy } = flowVelocity(p.x, p.y, t);
+        let { vx, vy } = flowVelocity(p.x, p.y, t);
+        vx += Math.sin(t * 0.00016 + p.phase) * 0.032;
+        vy += Math.cos(t * 0.00014 + p.phase * 0.8) * 0.025;
+        vy -= 0.05 * p.rise;
+        const l = Math.hypot(vx, vy) + 1e-6;
+        vx /= l;
+        vy /= l;
         p.x += vx * speed * dt;
         p.y += vy * speed * dt;
         if (p.x < 0) p.x += w;
         else if (p.x > w) p.x -= w;
         if (p.y < 0) p.y += h;
         else if (p.y > h) p.y -= h;
-
-        const br = breathe(p);
-        const rh = p.rHalo * br;
-        const rc = p.rCore * (0.92 + 0.08 * Math.sin(t * 0.0009 + p.phase * 1.3));
-
-        ctx.fillStyle = `rgba(${r},${g},${b},${haloA})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, rh, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = `rgba(${r},${g},${b},${coreA})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, rc, 0, Math.PI * 2);
-        ctx.fill();
       }
 
+      drawFrame(t);
       raf = requestAnimationFrame(step);
     };
 
@@ -191,7 +264,7 @@ export function FlowFieldCanvas({ season }: FlowFieldCanvasProps) {
   return (
     <div
       ref={wrapRef}
-      className="pointer-events-none absolute inset-0 z-[5] min-h-full w-full overflow-hidden"
+      className="pointer-events-none absolute inset-0 z-[6] min-h-full w-full overflow-hidden"
       aria-hidden
     >
       <canvas ref={canvasRef} className="block h-full min-h-full w-full min-w-full" />

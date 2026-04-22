@@ -40,7 +40,7 @@ export function MuseumHero() {
   const { label } = useSeasonTheme();
 
   return (
-    <div className="relative z-10 flex min-h-[min(100dvh,880px)] flex-col items-center justify-center pb-12 pt-[max(7.25rem,calc(env(safe-area-inset-top,0px)+4.85rem))] text-center sm:min-h-[min(100dvh,880px)] sm:pb-20 sm:pt-[max(9.5rem,calc(env(safe-area-inset-top,0px)+6.25rem))] lg:pb-32 lg:pt-40">
+    <div className="relative z-10 flex min-h-[100dvh] flex-col items-center justify-center pb-12 pt-[max(7.25rem,calc(env(safe-area-inset-top,0px)+4.85rem))] text-center sm:min-h-[100dvh] sm:pb-20 sm:pt-[max(9.5rem,calc(env(safe-area-inset-top,0px)+6.25rem))] lg:pb-32 lg:pt-40">
       <motion.p
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
