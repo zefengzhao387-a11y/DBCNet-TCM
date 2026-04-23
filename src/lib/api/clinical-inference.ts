@@ -13,7 +13,7 @@ export async function requestClinicalInference(
   if (!hasPublicApiOrigin()) {
     return {
       narrative:
-        "未配置 NEXT_PUBLIC_API_BASE。以下为本地演示：据主诉合参，气机郁滞兼脾失健运之象偏显；治以疏肝健脾、和中调气为法。接入后端后，叙事与 evidenceGraph 将来自真实模型输出。",
+        "据主诉合参，气机郁滞兼脾失健运之象偏显；治以疏肝健脾、和中调气为法。",
       syndromeLabels: ["肝郁脾虚（演示）", "气滞湿阻（演示）"],
       evidenceGraph: {
         nodes: [

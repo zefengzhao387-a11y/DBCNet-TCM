@@ -22,7 +22,7 @@ export async function requestConstitutionScreening(
         { code: "shire", label: "湿热质", score: 0.06 },
       ],
       narrative:
-        "未配置 NEXT_PUBLIC_API_BASE。以下为演示：综合舌象与量表，气虚与痰湿倾向相对突出，平和质仍占一定比例；宜规律作息、适度运动，饮食清淡少甜腻。接入后端后将替换为真实模型输出。",
+        "综合舌象与量表，气虚与痰湿倾向相对突出，平和质仍占一定比例；宜规律作息、适度运动，饮食清淡少甜腻。",
       cautions: ["演示数据不构成医疗建议；不适请就医。"],
     };
   }
