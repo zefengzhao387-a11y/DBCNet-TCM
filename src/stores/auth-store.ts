@@ -43,21 +43,31 @@ export const useAuthStore = create<AuthState>()((set) => ({
     }
   },
   login: async (email, password) => {
-    const r = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const d = (await r.json().catch(() => ({}))) as { error?: string; user?: AuthUser };
-    if (!r.ok) {
-      return { error: typeof d.error === "string" && d.error ? d.error : "登录失败" };
+    try {
+      const r = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const d = (await r.json().catch(() => ({}))) as { error?: string; user?: AuthUser };
+      if (!r.ok) {
+        if (typeof d.error === "string" && d.error) {
+          return { error: d.error };
+        }
+        if (r.status >= 500) {
+          return { error: "服务暂不可用，请稍后重试" };
+        }
+        return { error: "登录失败" };
+      }
+      if (d.user) {
+        set({ isAuthenticated: true, user: d.user, sessionReady: true });
+      } else {
+        set({ isAuthenticated: false, user: null, sessionReady: true });
+      }
+      return {};
+    } catch {
+      return { error: "网络异常，请检查连接后重试" };
     }
-    if (d.user) {
-      set({ isAuthenticated: true, user: d.user, sessionReady: true });
-    } else {
-      set({ isAuthenticated: false, user: null, sessionReady: true });
-    }
-    return {};
   },
   register: async ({ email, password, displayName }) => {
     const r = await fetch("/api/auth/register", {

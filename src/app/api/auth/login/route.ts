@@ -22,37 +22,42 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "请输入邮箱与密码" }, { status: 400 });
   }
 
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    return NextResponse.json({ error: "邮箱或密码不正确" }, { status: 401 });
-  }
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return NextResponse.json({ error: "邮箱或密码不正确" }, { status: 401 });
+    }
 
-  const ok = await compare(password, user.passwordHash);
-  if (!ok) {
-    return NextResponse.json({ error: "邮箱或密码不正确" }, { status: 401 });
-  }
+    const ok = await compare(password, user.passwordHash);
+    if (!ok) {
+      return NextResponse.json({ error: "邮箱或密码不正确" }, { status: 401 });
+    }
 
-  const token = await createSessionToken({
-    sub: user.id,
-    email: user.email,
-    displayName: user.displayName,
-  });
-
-  const res = NextResponse.json({
-    user: {
-      id: user.id,
+    const token = await createSessionToken({
+      sub: user.id,
       email: user.email,
       displayName: user.displayName,
-    },
-  });
+    });
 
-  res.cookies.set(SESSION_COOKIE_NAME, token, {
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: MAX_AGE_S,
-  });
+    const res = NextResponse.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        displayName: user.displayName,
+      },
+    });
 
-  return res;
+    res.cookies.set(SESSION_COOKIE_NAME, token, {
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: MAX_AGE_S,
+    });
+
+    return res;
+  } catch (error) {
+    console.error("[auth/login] internal error", error);
+    return NextResponse.json({ error: "服务暂不可用，请稍后重试" }, { status: 503 });
+  }
 }
