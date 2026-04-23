@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
 
 export type AuthUser = {
   id: string;
@@ -10,36 +9,53 @@ export type AuthUser = {
 type AuthState = {
   isAuthenticated: boolean;
   user: AuthUser | null;
-  login: (staffId: string, password: string) => void;
-  logout: () => void;
+  /** 已尝试与 /api/auth/me 同步（含失败） */
+  sessionReady: boolean;
+  fetchSession: () => Promise<void>;
+  login: (staffId: string, password: string) => Promise<{ error?: string }>;
+  logout: () => Promise<void>;
 };
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      isAuthenticated: false,
-      user: null,
-      login: (staffId, password) => {
-        void password;
-        const id = staffId.trim() || "guest";
-        set({
-          isAuthenticated: true,
-          user: {
-            id: `mock-${id}`,
-            staffId: id,
-            displayName: id === "guest" ? "访客医师" : `${id} · 医师`,
-          },
-        });
-      },
-      logout: () => set({ isAuthenticated: false, user: null }),
-    }),
-    {
-      name: "dbcnet-auth-mock",
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        isAuthenticated: state.isAuthenticated,
-        user: state.user,
-      }),
-    },
-  ),
-);
+export const useAuthStore = create<AuthState>()((set) => ({
+  isAuthenticated: false,
+  user: null,
+  sessionReady: false,
+  fetchSession: async () => {
+    try {
+      const r = await fetch("/api/auth/me", { credentials: "same-origin" });
+      if (!r.ok) {
+        set({ isAuthenticated: false, user: null, sessionReady: true });
+        return;
+      }
+      const d = (await r.json()) as { user: AuthUser | null };
+      if (d.user) {
+        set({ isAuthenticated: true, user: d.user, sessionReady: true });
+      } else {
+        set({ isAuthenticated: false, user: null, sessionReady: true });
+      }
+    } catch {
+      set({ isAuthenticated: false, user: null, sessionReady: true });
+    }
+  },
+  login: async (staffId, password) => {
+    const r = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ staffId, password }),
+    });
+    const d = (await r.json().catch(() => ({}))) as { error?: string; user?: AuthUser };
+    if (!r.ok) {
+      return { error: typeof d.error === "string" && d.error ? d.error : "登录失败" };
+    }
+    if (d.user) {
+      set({ isAuthenticated: true, user: d.user, sessionReady: true });
+    } else {
+      set({ isAuthenticated: false, user: null, sessionReady: true });
+    }
+    return {};
+  },
+  logout: async () => {
+    await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
+    set({ isAuthenticated: false, user: null, sessionReady: true });
+  },
+}));

@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 
 import { AppShell } from "@/components/shell/AppShell";
 import { SEASON_INLINE_INIT } from "@/lib/season-inline-script";
+import { ZEN_INLINE_INIT } from "@/lib/zen-inline-script";
 
 import "./globals.css";
 
@@ -58,9 +59,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
+    <html lang="zh-CN" data-zen="xuan" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: SEASON_INLINE_INIT }} />
+        <script dangerouslySetInnerHTML={{ __html: ZEN_INLINE_INIT }} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${notoSerifSC.variable} min-h-screen font-sans antialiased`}

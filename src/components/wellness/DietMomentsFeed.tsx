@@ -18,7 +18,7 @@ function MomentCard({ card, className }: { card: DietMomentCard; className?: str
       viewport={{ once: true, amount: 0.15 }}
       transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        "overflow-hidden rounded-[1.75rem] border border-stone-200/70 bg-white/75 shadow-[0_12px_40px_rgba(42,50,44,0.06)] backdrop-blur-md",
+        "overflow-hidden rounded-[1.75rem] border border-stone-200/70 bg-white/75 shadow-[0_12px_40px_rgba(42,50,44,0.06)] backdrop-blur-md dark:border-stone-500/30 dark:bg-stone-900/50",
         className,
       )}
     >
@@ -36,13 +36,13 @@ function MomentCard({ card, className }: { card: DietMomentCard; className?: str
       <div className="space-y-3 p-5 sm:p-6">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="font-sans text-[11px] font-medium text-stone-400">{card.author}</p>
-            <h3 className="mt-1 font-serif text-[1.05rem] font-medium leading-snug tracking-[0.06em] text-stone-800 sm:text-[1.15rem]">
+            <p className="font-sans text-[11px] font-medium text-muted-foreground">{card.author}</p>
+            <h3 className="mt-1 font-serif text-[1.05rem] font-medium leading-snug tracking-[0.06em] text-foreground sm:text-[1.15rem]">
               {card.title}
             </h3>
           </div>
           <FavoriteStarButton
-            className="shrink-0 text-stone-500 hover:bg-white/60"
+            className="shrink-0 text-muted-foreground hover:bg-white/60 dark:hover:bg-stone-800/60"
             item={{
               id: `diet-${card.id}`,
               kind: "diet",
@@ -63,13 +63,13 @@ function MomentCard({ card, className }: { card: DietMomentCard; className?: str
             </span>
           ))}
         </div>
-        <p className="font-sans text-[13px] font-light leading-[1.75] text-stone-600">{card.blurb}</p>
-        <div className="flex items-center gap-4 border-t border-stone-200/60 pt-3 font-sans text-[12px] text-stone-400">
+        <p className="font-sans text-[13px] font-light leading-[1.75] text-muted-foreground">{card.blurb}</p>
+        <div className="flex items-center gap-4 border-t border-border/50 pt-3 font-sans text-[12px] text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <Heart className="size-4 text-rose-400/90" aria-hidden />
             {card.likes.toLocaleString("zh-CN")}
           </span>
-          <span className="text-stone-300">·</span>
+          <span className="text-border">·</span>
           <span>养生圈 · 示意</span>
         </div>
       </div>
@@ -86,16 +86,16 @@ export function DietMomentsFeed({ className }: { className?: string }) {
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.28em] text-stone-400">
+            <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
               Wellness Feed
             </p>
             <h2
               id="diet-moments-heading"
-              className="museum-cn-title mt-3 text-[clamp(1.45rem,3.2vw,2rem)] leading-snug text-stone-800"
+              className="museum-cn-title mt-3 text-[clamp(1.45rem,3.2vw,2rem)] leading-snug text-foreground"
             >
               膳食灵感
             </h2>
-            <p className="mt-2 max-w-xl font-sans text-[14px] font-light leading-relaxed text-stone-500">
+            <p className="mt-2 max-w-xl font-sans text-[14px] font-light leading-relaxed text-muted-foreground">
               像朋友圈一样滑动浏览：每道搭配功效标签，文意为科普示意，具体体质请遵医嘱。
             </p>
           </div>

@@ -4,12 +4,16 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 
 import type { Season } from "@/types/season";
+import type { ZenMode } from "@/types/zen";
+import { cn } from "@/lib/utils";
 
 import { FlowFieldCanvas } from "./FlowFieldCanvas";
 import { QiFlow } from "./QiFlow";
 
 type AtmosphereProps = {
   season: Season;
+  /** 禅意：宣纸为亮读面，水墨为夜读面；天幕与 body 色同步 */
+  zenMode?: ZenMode;
   /** scroll：随页面高度铺底的长布；viewport：固定视口；extended：超高画布（旧式 fixed 场景） */
   layout?: "scroll" | "extended" | "viewport";
 };
@@ -76,6 +80,24 @@ function skyBloomC(season: Season): string {
   }
 }
 
+/** 水墨天幕：中性深灰为底 + 极淡月雾，季色晕降到 ~8% 不糊绿 */
+function skyBaseInk(): string {
+  return `linear-gradient(188deg, #282a28 0%, #1e201e 32%, #161816 100%), radial-gradient(ellipse 110% 70% at 50% 0%, rgba(190, 195, 192, 0.07), transparent 58%)`;
+}
+
+function skyBloomAInk(): string {
+  return `radial-gradient(ellipse 86% 72% at 22% 20%, rgba(200, 205, 200, 0.09) 0%, rgba(50, 54, 52, 0.1) 48%, transparent 72%)`;
+}
+
+function skyBloomBInk(): string {
+  return `radial-gradient(ellipse 90% 74% at 78% 68%, rgba(88, 92, 90, 0.16) 0%, rgba(30, 32, 32, 0.12) 50%, transparent 75%)`;
+}
+
+function skyBloomCInk(season: Season): string {
+  const t = { spring: "100, 140, 120", summer: "180, 100, 95", autumn: "180, 150, 100", winter: "120, 130, 145" }[season];
+  return `radial-gradient(ellipse 70% 56% at 50% 50%, rgba(${t}, 0.055) 0%, transparent 65%)`;
+}
+
 /**
  * 画布高于视口并向上、下各伸出一段，配合 scroll translateY 仍满屏不露边。
  * 高度用 min-h 保证长页滚动时视口内始终有足量像素。
@@ -84,12 +106,26 @@ const CANVAS_EXTRA_VH = 85;
 
 export function Atmosphere({
   season,
+  zenMode = "xuan",
   layout = "viewport",
 }: AtmosphereProps) {
-  const skyBaseLayer = useMemo(() => skyBase(season), [season]);
-  const bloomA = useMemo(() => skyBloomA(season), [season]);
-  const bloomB = useMemo(() => skyBloomB(season), [season]);
-  const bloomC = useMemo(() => skyBloomC(season), [season]);
+  const { skyBaseLayer, bloomA, bloomB, bloomC } = useMemo(() => {
+    if (zenMode === "ink") {
+      return {
+        skyBaseLayer: skyBaseInk(),
+        bloomA: skyBloomAInk(),
+        bloomB: skyBloomBInk(),
+        bloomC: skyBloomCInk(season),
+      };
+    }
+    const s = zenMode === "xuan" && season === "winter" ? "spring" : season;
+    return {
+      skyBaseLayer: skyBase(s),
+      bloomA: skyBloomA(s),
+      bloomB: skyBloomB(s),
+      bloomC: skyBloomC(s),
+    };
+  }, [zenMode, season]);
 
   const isScroll = layout === "scroll";
   const canvasMin =
@@ -107,10 +143,15 @@ export function Atmosphere({
 
   return (
     <div
-      className={rootClass}
+      className={cn(
+        rootClass,
+        "atmosphere-root",
+        "transition-[filter,opacity] duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)]",
+      )}
       style={isScroll ? undefined : { top: canvasTop, minHeight: canvasMin }}
       aria-hidden
       data-season={season}
+      data-zen={zenMode}
     >
       <div className="absolute inset-0" style={{ background: skyBaseLayer }} />
 

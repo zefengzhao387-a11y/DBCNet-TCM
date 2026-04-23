@@ -12,7 +12,7 @@ import { MuseumNav } from "./MuseumNav";
 
 export function MuseumLanding() {
   return (
-    <div className="museum-ambient museum-airy relative min-h-screen text-[#3a4540]">
+    <div className="museum-ambient museum-airy text-foreground relative min-h-screen">
       <LayoutGroup id="dbcnet-museum-landing">
         <main
           id="museum-home"

@@ -57,6 +57,11 @@
     scroll-padding-top: max(5.5rem, env(safe-area-inset-top, 0px));
     /* 避免 100vw / 子元素取整在右侧露出 body 浅色「缝」 */
     overflow-x: hidden;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 
   h1,
@@ -211,6 +216,94 @@
     --app-bg-radial-b: rgba(18, 20, 24, 0.88);
     --sidebar-tint: rgba(120, 120, 128, 0.08);
     --xai-tint: rgba(120, 120, 128, 0.06);
+  }
+
+  /* —— 禅意光效 · 宣纸白：略提纸纤维与微暖，不替代季令主色 —— */
+  html[data-zen="xuan"] {
+    --paper-fiber-opacity: 0.055;
+    --paper-noise-opacity: 0.028;
+  }
+
+  /* 冬月 + 宣纸：以春令展纸色为底，保夜读不被迫进入「冬令全暗」；仍保留冬 data-season 以粒子等逻辑 */
+  html.season-winter[data-zen="xuan"] {
+    --background: #e2ebe5;
+    --foreground: #152822;
+    --card: rgba(255, 255, 255, 0.76);
+    --card-foreground: #152822;
+    --popover: rgba(255, 255, 255, 0.94);
+    --popover-foreground: #152822;
+    --primary: #3d6b5c;
+    --primary-foreground: #f5faf8;
+    --secondary: #d0e3da;
+    --secondary-foreground: #1e342c;
+    --muted: #d3e3db;
+    --muted-foreground: #3d5148;
+    --accent: #b0d2c4;
+    --accent-foreground: #1a2e28;
+    --destructive: #b42318;
+    --destructive-foreground: #fff7f7;
+    --border: rgba(61, 107, 92, 0.14);
+    --input: rgba(61, 107, 92, 0.1);
+    --ring: #3d6b5c;
+    /* 冬令里 accent 可略作灰青以别春季 */
+    --season-accent: #3f6b5a;
+    --canvas-vignette: rgba(61, 107, 92, 0.08);
+    --glass-fill: rgba(255, 255, 255, 0.5);
+    --glass-stroke: rgba(255, 255, 255, 0.52);
+    --glass-highlight: rgba(255, 255, 255, 0.32);
+    --app-bg-base: #e4f0e9;
+    --app-bg-radial-a: rgba(88, 150, 128, 0.2);
+    --app-bg-radial-b: rgba(155, 200, 180, 0.3);
+    --sidebar-tint: rgba(61, 107, 92, 0.07);
+    --xai-tint: rgba(61, 107, 92, 0.05);
+    --morandi-sky-top: #cad8d0;
+    --morandi-sky-bottom: #121614;
+  }
+
+  /* 水墨暗：中性炭灰为底、季色只点在主/环上；字阶提亮，避免深绿叠深绿 */
+  html.season-spring[data-zen="ink"],
+  html.season-summer[data-zen="ink"],
+  html.season-autumn[data-zen="ink"],
+  html.season-winter[data-zen="ink"] {
+    --background: #222322;
+    --foreground: #f5f2eb;
+    --card: rgba(48, 50, 48, 0.95);
+    --card-foreground: #faf8f3;
+    --popover: rgba(40, 42, 40, 0.98);
+    --popover-foreground: #f5f2eb;
+    --primary: color-mix(in srgb, var(--season-accent) 62%, #6e7c74);
+    --primary-foreground: #0a0a09;
+    --secondary: #343633;
+    --secondary-foreground: #ece8df;
+    --muted: #2f3130;
+    --muted-foreground: #ccc4b4;
+    --accent: #3a3d3a;
+    --accent-foreground: #f8f6f0;
+    --destructive: #c75a4e;
+    --destructive-foreground: #120807;
+    --border: rgba(255, 255, 255, 0.11);
+    --input: rgba(255, 255, 255, 0.1);
+    --ring: color-mix(in srgb, var(--season-accent) 48%, #9aa39a);
+    --canvas-vignette: rgba(0, 0, 0, 0.22);
+    --glass-fill: rgba(42, 44, 42, 0.75);
+    --glass-stroke: rgba(255, 255, 255, 0.14);
+    --glass-highlight: rgba(80, 84, 80, 0.28);
+    /* 整页基色略提亮，径向为中性雾，不再用高比例季色染底 */
+    --app-bg-base: #181a18;
+    --app-bg-radial-a: color-mix(in srgb, var(--season-accent) 14%, rgba(70, 74, 72, 0.42));
+    --app-bg-radial-b: color-mix(in srgb, var(--season-accent) 8%, rgba(28, 30, 28, 0.92));
+    --sidebar-tint: rgba(255, 255, 255, 0.04);
+    --xai-tint: rgba(255, 255, 255, 0.03);
+    --morandi-sky-top: #2a2c2a;
+    --morandi-sky-bottom: #101110;
+  }
+
+  /** 无 View Transitions 时：同帧换肤 + 字/底缓动 */
+  html.zen-theme-tweening,
+  html.zen-theme-tweening body {
+    transition:
+      color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   body {
@@ -436,6 +529,14 @@
     --museum-nebula-core: color-mix(in srgb, var(--season-accent) 22%, #030308);
   }
 
+  /** 水墨下粒子/气泡：压饱和，偏银灰烟，少与底色素叠成「脏绿」 */
+  html[data-zen="ink"] .museum-ambient {
+    --museum-bubble-a: color-mix(in srgb, var(--season-accent) 22%, rgba(140, 142, 138, 0.2));
+    --museum-bubble-b: color-mix(in srgb, var(--primary) 18%, rgba(120, 124, 120, 0.16));
+    --museum-bubble-c: rgba(100, 104, 100, 0.14);
+    --museum-nebula-core: color-mix(in srgb, var(--season-accent) 12%, rgba(24, 26, 24, 0.6));
+  }
+
   /** 典雅清新：纸本光域上的淡墨展陈（覆盖深色玻璃默认值） */
   .museum-airy .museum-glass-nav {
     @apply rounded-full border border-white/70 shadow-[0_8px_32px_rgba(42,50,44,0.06)] backdrop-blur-xl backdrop-saturate-[1.05];
@@ -447,6 +548,46 @@
     box-shadow:
       0 10px 36px rgba(42, 50, 44, 0.07),
       inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  }
+
+  /* 禅意 · 水墨：顶栏玻璃偏浅一层，与底拉开；登录字色贴近 --foreground */
+  html[data-zen="ink"] .museum-airy .museum-glass-nav {
+    @apply backdrop-saturate-[1.02];
+    border-color: rgba(255, 255, 255, 0.14);
+    background: linear-gradient(
+      198deg,
+      rgba(52, 54, 52, 0.94) 0%,
+      rgba(36, 38, 36, 0.9) 100%
+    );
+    box-shadow:
+      0 10px 32px rgba(0, 0, 0, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  html[data-zen="ink"] .museum-liquid-login-link {
+    background: linear-gradient(180deg, #3a3d3a, #2a2c2a);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--foreground);
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  html[data-zen="ink"] .museum-liquid-login-link:hover {
+    color: var(--foreground);
+    background: linear-gradient(180deg, #454845, #333634);
+  }
+
+  html[data-zen="ink"] .museum-airy .museum-glass-card {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(
+      170deg,
+      rgba(50, 52, 50, 0.96) 0%,
+      rgba(36, 38, 36, 0.94) 100%
+    );
+    box-shadow:
+      0 10px 36px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   /** 右上角登录：液态光晕（与主导航同属 fixed 顶栏） */
@@ -573,6 +714,19 @@
     border-color: rgba(45, 58, 50, 0.06);
   }
 
+  html[data-zen="ink"] .museum-airy .museum-glass-card::before {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(200, 205, 200, 0.1),
+      transparent
+    );
+  }
+
+  html[data-zen="ink"] .museum-airy .museum-glass-card::after {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
   .museum-airy .museum-glass-card:hover {
     box-shadow:
       0 20px 56px rgba(42, 50, 44, 0.09),
@@ -598,6 +752,26 @@
       0 14px 40px rgba(42, 50, 44, 0.07),
       0 0 0 1px color-mix(in srgb, var(--season-accent) 10%, transparent),
       inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  }
+
+  /** 水墨时令卡：#id 选择器会压过通用水墨卡，需单独拉亮表面与字对比 */
+  html[data-zen="ink"] .museum-airy #daily-season .museum-glass-card {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(
+      168deg,
+      rgba(50, 52, 50, 0.96) 0%,
+      rgba(40, 42, 40, 0.94) 100%
+    );
+    box-shadow:
+      0 8px 28px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  html[data-zen="ink"] .museum-airy #daily-season .museum-glass-card:hover {
+    box-shadow:
+      0 12px 36px rgba(0, 0, 0, 0.24),
+      0 0 0 1px color-mix(in srgb, var(--season-accent) 18%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 
   .museum-glass-card {
@@ -747,4 +921,11 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.08),
       0 28px 64px rgba(0, 0, 0, 0.35);
   }
+}
+
+/* 禅意：整页换肤的 View Transitions 根快照（与 `withZenViewTransition` 同节奏） */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.55s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }

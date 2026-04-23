@@ -31,7 +31,7 @@ export function MuseumMobileDock() {
             <Link
               key={href}
               href={href}
-              className="flex min-h-[48px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] font-medium tracking-wide text-stone-500 transition active:scale-[0.97] active:bg-stone-100/90 active:text-stone-800"
+              className="flex min-h-[48px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] font-medium tracking-wide text-muted-foreground transition active:scale-[0.97] active:bg-stone-100/90 active:text-foreground dark:active:bg-stone-800/80 dark:active:text-foreground"
             >
               <Icon className="size-[1.15rem] shrink-0 text-[color-mix(in_srgb,var(--season-accent)_42%,#78716c)]" aria-hidden />
               {label}
@@ -40,7 +40,7 @@ export function MuseumMobileDock() {
             <a
               key={href}
               href={href}
-              className="flex min-h-[48px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] font-medium tracking-wide text-stone-500 transition active:scale-[0.97] active:bg-stone-100/90 active:text-stone-800"
+              className="flex min-h-[48px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] font-medium tracking-wide text-muted-foreground transition active:scale-[0.97] active:bg-stone-100/90 active:text-foreground dark:active:bg-stone-800/80 dark:active:text-foreground"
             >
               <Icon className="size-[1.15rem] shrink-0 text-[color-mix(in_srgb,var(--season-accent)_42%,#78716c)]" aria-hidden />
               {label}

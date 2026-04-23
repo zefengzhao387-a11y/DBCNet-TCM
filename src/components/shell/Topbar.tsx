@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ZenModeToggle } from "@/components/zen/ZenModeToggle";
 import { useSeasonTheme } from "@/hooks/useSeasonTheme";
 import { useAuthStore } from "@/stores/auth-store";
 import { useUIStore } from "@/stores/ui-store";
@@ -29,8 +30,8 @@ export function Topbar() {
   const xaiOpen = useUIStore((s) => s.xaiOpen);
   const logout = useAuthStore((s) => s.logout);
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    await logout();
     router.push("/login");
   }
 
@@ -72,6 +73,7 @@ export function Topbar() {
       </div>
 
       <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+        <ZenModeToggle withLabel className="mr-0.5" size="md" />
         <Button
           type="button"
           variant="outline"

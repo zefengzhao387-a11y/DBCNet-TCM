@@ -1,38 +1,28 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 import { useAuthStore } from "@/stores/auth-store";
 
 export function AuthGate({ children }: { children: ReactNode }) {
   const router = useRouter();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [hydrated, setHydrated] = useState(false);
+  const sessionReady = useAuthStore((s) => s.sessionReady);
+  const fetchSession = useAuthStore((s) => s.fetchSession);
 
   useEffect(() => {
-    const api = useAuthStore.persist;
-    if (!api) {
-      setHydrated(true);
-      return;
-    }
-    if (api.hasHydrated()) {
-      setHydrated(true);
-    }
-    const unsub = api.onFinishHydration(() => {
-      setHydrated(true);
-    });
-    return unsub;
-  }, []);
+    void fetchSession();
+  }, [fetchSession]);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!sessionReady) return;
     if (!isAuthenticated) {
       router.replace("/login");
     }
-  }, [hydrated, isAuthenticated, router]);
+  }, [sessionReady, isAuthenticated, router]);
 
-  if (!hydrated) {
+  if (!sessionReady) {
     return (
       <div className="flex h-full min-h-[14rem] flex-col items-center justify-center gap-3">
         <div className="h-9 w-9 animate-pulse rounded-full bg-muted/80" />

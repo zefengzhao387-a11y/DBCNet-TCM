@@ -2,12 +2,15 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { useLayoutEffect, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, type ReactNode } from "react";
 
 import { Atmosphere } from "@/components/background/Atmosphere";
 import { useSeasonTheme } from "@/hooks/useSeasonTheme";
 import { cn } from "@/lib/utils";
-import { useUIStore } from "@/stores/ui-store";
+import { useAuthStore } from "@/stores/auth-store";
+import { syncZenFromDocument, useUIStore } from "@/stores/ui-store";
+
+import { ZenModeToggle } from "@/components/zen/ZenModeToggle";
 
 import { AppWorkspaceDock } from "./AppWorkspaceDock";
 import { Sidebar } from "./Sidebar";
@@ -20,6 +23,17 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isMuseumHome = pathname === "/";
   const { season } = useSeasonTheme();
   const setXaiOpen = useUIStore((s) => s.setXaiOpen);
+  const zenMode = useUIStore((s) => s.zenMode);
+  const fetchSession = useAuthStore((s) => s.fetchSession);
+
+  useLayoutEffect(() => {
+    syncZenFromDocument();
+  }, []);
+
+  useEffect(() => {
+    if (isLogin) return;
+    void fetchSession();
+  }, [isLogin, fetchSession]);
 
   /** 进入临床页默认展开逻辑链，避免右侧被裁切时误以为「没有面板」 */
   useLayoutEffect(() => {
@@ -50,6 +64,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         <Atmosphere
           season={season}
+          zenMode={zenMode}
           layout={isMuseumHome ? "scroll" : "viewport"}
         />
       </div>
@@ -73,6 +88,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-10 flex h-full min-h-0 w-full min-w-0 items-center justify-center"
           >
+            <div
+              className="pointer-events-auto fixed right-4 top-[max(0.75rem,env(safe-area-inset-top,0px))] z-30 sm:right-6 sm:top-6"
+              data-zen-toggle-anchor
+            >
+              <ZenModeToggle withLabel size="md" />
+            </div>
             {children}
           </motion.div>
         ) : isMuseumHome ? (

@@ -4,6 +4,7 @@ import { MapPinned } from "lucide-react";
 import Link from "next/link";
 
 import { DbcnetMark } from "@/components/brand/DbcnetMark";
+import { ZenModeToggle } from "@/components/zen/ZenModeToggle";
 import { useSeasonTheme } from "@/hooks/useSeasonTheme";
 import { cn } from "@/lib/utils";
 
@@ -45,10 +46,10 @@ export function MuseumNav({ className }: { className?: string }) {
               aria-hidden
             />
             <div className="min-w-0 text-left">
-              <span className="block font-serif text-base font-medium leading-tight tracking-[0.1em] text-[#1f2924] sm:text-lg md:text-[1.4rem] md:tracking-[0.11em]">
+              <span className="block font-serif text-base font-medium leading-tight tracking-[0.1em] text-foreground sm:text-lg md:text-[1.4rem] md:tracking-[0.11em]">
                 岐黄智诊
               </span>
-              <span className="mt-0.5 line-clamp-1 block text-[0.5rem] font-medium tracking-[0.14em] text-stone-500 sm:line-clamp-none sm:text-[0.6rem] sm:leading-snug sm:tracking-[0.15em]">
+              <span className="mt-0.5 line-clamp-1 block text-[0.5rem] font-medium tracking-[0.14em] text-muted-foreground sm:line-clamp-none sm:text-[0.6rem] sm:leading-snug sm:tracking-[0.15em]">
                 DBCNet · 多模态中医智能辅助
               </span>
             </div>
@@ -66,10 +67,10 @@ export function MuseumNav({ className }: { className?: string }) {
             )}
           >
             <div
-              className="flex w-[min(100%,10.5rem)] shrink-0 flex-col justify-center border-r border-stone-200/80 py-0.5 pr-2.5"
+              className="flex w-[min(100%,10.5rem)] shrink-0 flex-col justify-center border-r border-border/60 py-0.5 pr-2.5"
               title={themeSkinLabel}
             >
-              <p className="text-[9px] font-medium leading-none tracking-[0.16em] text-stone-500">
+              <p className="text-[9px] font-medium leading-none tracking-[0.16em] text-muted-foreground">
                 展厅导览
               </p>
               <div className="mt-1 flex min-w-0 items-center gap-1.5">
@@ -77,14 +78,14 @@ export function MuseumNav({ className }: { className?: string }) {
                   className="size-3.5 shrink-0 text-[color-mix(in_srgb,var(--season-accent)_52%,#78716c)] sm:size-4"
                   aria-hidden
                 />
-                <p className="min-w-0 font-serif text-xs font-medium leading-tight tracking-[0.05em] text-[#3a4540] sm:text-[0.8125rem]">
+                <p className="min-w-0 font-serif text-xs font-medium leading-tight tracking-[0.05em] text-foreground sm:text-[0.8125rem]">
                   {label}
                 </p>
               </div>
             </div>
             <nav
               aria-label="博物馆主导航"
-              className="scrollbar-hide flex min-h-0 w-full min-w-0 flex-1 flex-wrap items-center justify-end gap-0.5 pl-0.5 pr-1.5 font-sans text-[10.5px] font-medium tracking-[0.03em] text-stone-600 sm:gap-1.5 sm:pl-1.5 sm:text-xs md:gap-1.5 md:text-[12.5px] md:tracking-[0.04em] lg:justify-end lg:gap-1.5 lg:pr-2.5 lg:text-[13px]"
+              className="scrollbar-hide flex min-h-0 w-full min-w-0 flex-1 flex-wrap items-center justify-end gap-0.5 pl-0.5 pr-1.5 font-sans text-[10.5px] font-medium tracking-[0.03em] text-muted-foreground sm:gap-1.5 sm:pl-1.5 sm:text-xs md:gap-1.5 md:text-[12.5px] md:tracking-[0.04em] lg:justify-end lg:gap-1.5 lg:pr-2.5 lg:text-[13px]"
             >
               {links.map(({ href, label }) =>
                 href.startsWith("/") ? (
@@ -92,7 +93,7 @@ export function MuseumNav({ className }: { className?: string }) {
                     key={href}
                     href={href}
                     className={cn(
-                      "inline-flex min-h-9 shrink-0 touch-manipulation items-center justify-center rounded-full px-2 py-1.5 text-stone-600 transition duration-200 hover:bg-stone-100/90 hover:text-stone-900 sm:min-h-0 sm:px-2.5 sm:py-2.5",
+                      "inline-flex min-h-9 shrink-0 touch-manipulation items-center justify-center rounded-full px-2 py-1.5 text-muted-foreground transition duration-200 hover:bg-muted/60 hover:text-foreground sm:min-h-0 sm:px-2.5 sm:py-2.5",
                       "md:px-3 md:py-1.5",
                       label === "临床决策" ? "hidden min-[400px]:inline-flex" : null,
                     )}
@@ -103,7 +104,7 @@ export function MuseumNav({ className }: { className?: string }) {
                   <a
                     key={href}
                     href={href}
-                    className="inline-flex min-h-9 shrink-0 touch-manipulation items-center justify-center rounded-full px-2 py-1.5 text-stone-600 transition duration-200 hover:bg-stone-100/90 hover:text-stone-900 sm:min-h-0 sm:px-2.5 sm:py-2.5 md:px-3 md:py-1.5"
+                    className="inline-flex min-h-9 shrink-0 touch-manipulation items-center justify-center rounded-full px-2 py-1.5 text-muted-foreground transition duration-200 hover:bg-muted/60 hover:text-foreground sm:min-h-0 sm:px-2.5 sm:py-2.5 md:px-3 md:py-1.5"
                   >
                     {label}
                   </a>
@@ -112,26 +113,29 @@ export function MuseumNav({ className }: { className?: string }) {
             </nav>
           </div>
           <p
-            className="-mx-0.5 min-w-0 max-w-full flex-1 text-center text-[0.5rem] font-medium leading-tight tracking-[0.1em] text-stone-500/95 [text-wrap:balance] min-[400px]:text-[0.55rem] sm:mx-0 sm:max-w-[min(100%,18rem)] sm:text-xs sm:leading-snug lg:hidden"
+            className="-mx-0.5 min-w-0 max-w-full flex-1 text-center text-[0.5rem] font-medium leading-tight tracking-[0.1em] text-muted-foreground [text-wrap:balance] min-[400px]:text-[0.55rem] sm:mx-0 sm:max-w-[min(100%,18rem)] sm:text-xs sm:leading-snug lg:hidden"
             title="多模态中医：临床与体质、知识、时令、膳食等场景"
           >
             临床与体质
-            <span className="text-stone-400/80">·</span>
+            <span className="text-muted-foreground/40">·</span>
             知识与时令
-            <span className="text-stone-400/80">·</span>
+            <span className="text-muted-foreground/40">·</span>
             一站随览
           </p>
         </div>
 
-        <div className="museum-liquid-login-shell ml-auto shrink-0">
+        <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2.5">
+          <ZenModeToggle withLabel size="md" />
+          <div className="museum-liquid-login-shell">
           <span className="museum-liquid-login-blob museum-liquid-login-blob-a" aria-hidden />
           <span className="museum-liquid-login-blob museum-liquid-login-blob-b" aria-hidden />
           <Link
             href="/login"
-            className="museum-liquid-login-link relative z-[1] inline-flex min-h-[40px] min-w-[3.5rem] items-center justify-center rounded-full px-3.5 py-1.5 font-sans text-[12px] font-semibold tracking-wide text-[#2f3832] transition duration-300 hover:text-stone-900 sm:min-h-[44px] sm:min-w-[4.5rem] sm:px-4 sm:py-2 sm:text-[12.5px]"
+            className="museum-liquid-login-link text-foreground relative z-[1] inline-flex min-h-[40px] min-w-[3.5rem] items-center justify-center rounded-full px-3.5 py-1.5 font-sans text-[12px] font-semibold tracking-wide transition duration-300 hover:text-foreground/90 sm:min-h-[44px] sm:min-w-[4.5rem] sm:px-4 sm:py-2 sm:text-[12.5px]"
           >
             登录
           </Link>
+        </div>
         </div>
       </div>
     </div>
