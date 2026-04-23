@@ -36,6 +36,10 @@ export const metadata: Metadata = {
   title: "岐黄智诊 · 多模态中医智能辅助",
   description:
     "让中医可感知、可解释、可持续。基于多模态感知的中医大模型辅助诊断与体质辨识入口。",
+  icons: {
+    icon: [{ url: "/brand/dbcnet-mark.png", type: "image/png" }],
+    apple: "/brand/dbcnet-mark.png",
+  },
 };
 
 export const viewport: Viewport = {

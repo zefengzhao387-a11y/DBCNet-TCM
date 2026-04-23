@@ -6,6 +6,7 @@ import { BookOpen, Camera, Home, PanelLeft, Star, Stethoscope, UserRound } from 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { DbcnetMark } from "@/components/brand/DbcnetMark";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
@@ -55,7 +56,7 @@ export function Sidebar() {
         <div
           className={cn(
             "mb-6 flex items-center gap-1 px-1",
-            expanded ? "justify-between" : "justify-center",
+            expanded ? "justify-between" : "flex-col gap-2",
           )}
         >
           {expanded ? (
@@ -67,13 +68,22 @@ export function Sidebar() {
             >
               <Link
                 href="/"
-                className="block truncate text-sm font-semibold tracking-tight text-foreground transition hover:text-primary"
+                className="flex min-w-0 items-center gap-2.5 text-sm font-semibold tracking-tight text-foreground transition hover:text-primary"
                 title="返回展厅首页"
               >
-                岐黄智诊
+                <DbcnetMark aria-hidden />
+                <span className="truncate">岐黄智诊</span>
               </Link>
             </motion.div>
-          ) : null}
+          ) : (
+            <Link
+              href="/"
+              className="mb-0.5 flex h-12 w-12 items-center justify-center transition hover:opacity-90"
+              title="返回展厅首页"
+            >
+              <DbcnetMark className="!h-11 !w-11" />
+            </Link>
+          )}
           <Button
             type="button"
             variant="ghost"

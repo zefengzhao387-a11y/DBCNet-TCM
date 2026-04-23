@@ -21,7 +21,7 @@ export function MuseumLanding() {
           <MuseumNav />
           <section
             id="hero"
-            className="relative min-h-[100dvh] scroll-mt-[max(4.75rem,calc(env(safe-area-inset-top,0px)+3.5rem))] lg:scroll-mt-[max(6.5rem,calc(env(safe-area-inset-top,0px)+5rem))]"
+            className="relative min-h-[100dvh] scroll-mt-[max(5.75rem,calc(env(safe-area-inset-top,0px)+4.5rem))] lg:scroll-mt-[max(7.25rem,calc(env(safe-area-inset-top,0px)+5.5rem))]"
           >
             <MuseumHero />
           </section>

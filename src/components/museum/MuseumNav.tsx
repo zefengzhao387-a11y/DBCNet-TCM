@@ -1,7 +1,10 @@
 "use client";
 
+import { MapPinned } from "lucide-react";
 import Link from "next/link";
 
+import { DbcnetMark } from "@/components/brand/DbcnetMark";
+import { useSeasonTheme } from "@/hooks/useSeasonTheme";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -12,7 +15,13 @@ const links = [
   { href: "/knowledge", label: "知识库", emphasis: false },
 ] as const;
 
+/**
+ * 顶栏：品牌（Logo + 标题）固定在视口左上方并放大；中央玻璃位放主导航与副线文案。
+ * 窄屏不重复顶栏内链，由 `MuseumMobileDock` 承担快捷导航，中部只展示短说明。
+ */
 export function MuseumNav({ className }: { className?: string }) {
+  const { label, themeSkinLabel } = useSeasonTheme();
+
   return (
     <div
       className={cn(
@@ -20,35 +29,62 @@ export function MuseumNav({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="pointer-events-auto mx-auto flex w-full max-w-[min(100%,120rem)] items-center justify-between gap-2 sm:gap-3">
-        {/* 与右侧登录区对称，大屏下让中央胶囊视觉居中 */}
-        <div
-          className="hidden w-[5.5rem] shrink-0 lg:block"
-          aria-hidden
-        />
+      <div className="pointer-events-auto mx-auto flex w-full max-w-[min(100%,120rem)] min-h-[3.5rem] items-center gap-1.5 sm:min-h-[4.25rem] sm:gap-3">
+        {/* 左上：品牌主标识（放大、显眼） */}
+        <div className="min-w-0 shrink-0 pr-0.5 -ml-1.5 sm:-ml-2 md:-ml-2.5">
+          <Link
+            href="#hero"
+            className="group flex min-w-0 max-w-[calc(100dvw-8.5rem)] items-center gap-2.5 sm:max-w-[min(18rem,42vw)] sm:gap-3.5 sm:pr-1 md:max-w-none"
+            title="回到首页"
+            aria-label="岐黄智诊，回到首页"
+          >
+            <DbcnetMark
+              className="!h-14 !w-14 !min-h-14 !min-w-14 sm:!h-[3.75rem] sm:!w-[3.75rem] md:!h-16 md:!w-16"
+              sizes="(max-width: 640px) 112px, 128px"
+              priority
+              aria-hidden
+            />
+            <div className="min-w-0 text-left">
+              <span className="block font-serif text-base font-medium leading-tight tracking-[0.1em] text-[#1f2924] sm:text-lg md:text-[1.4rem] md:tracking-[0.11em]">
+                岐黄智诊
+              </span>
+              <span className="mt-0.5 line-clamp-1 block text-[0.5rem] font-medium tracking-[0.14em] text-stone-500 sm:line-clamp-none sm:text-[0.6rem] sm:leading-snug sm:tracking-[0.15em]">
+                DBCNet · 多模态中医智能辅助
+              </span>
+            </div>
+          </Link>
+        </div>
 
-        <div className="flex min-w-0 flex-1 justify-center">
-          <header
+        {/* 中部：原「玻璃主导航带」— 宽屏为链接；窄屏为能力副线，避免与底栏重复一屏两套链接 */}
+        <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center self-stretch pl-0.5 sm:pl-1">
+          <div
             className={cn(
-              "museum-glass-nav flex w-[min(13.5rem,calc(100dvw_-_5.5rem_-_env(safe-area-inset-left,0px)_-_env(safe-area-inset-right,0px)))] max-w-full items-center justify-center rounded-full px-5 py-2.5 shadow-[0_12px_40px_rgba(42,50,44,0.07)] max-lg:shadow-[0_12px_40px_rgba(42,50,44,0.07)]",
-              "lg:w-[min(48rem,calc(100dvw_-_11rem_-_env(safe-area-inset-left,0px)_-_env(safe-area-inset-right,0px)))] lg:justify-between lg:gap-4 lg:rounded-full lg:px-6 lg:py-2.5",
+              "museum-glass-nav pointer-events-auto hidden w-full min-h-[2.75rem] max-w-[min(100%,40rem)] flex-1 items-stretch justify-center gap-0 rounded-2xl py-1.5 pl-2.5 pr-0 shadow-[0_12px_40px_rgba(42,50,44,0.07)] sm:rounded-3xl sm:pl-3",
+              "md:min-h-[2.75rem] md:max-w-[min(100%,40rem)] md:rounded-full md:pl-3.5",
+              "lg:max-w-[min(100%,50rem)] lg:min-h-[2.9rem] lg:gap-2 lg:py-2.5",
+              "lg:flex lg:flex-row lg:items-center",
             )}
           >
-            <Link
-              href="#hero"
-              className="group flex shrink-0 items-baseline gap-0.5 font-serif text-[13px] font-medium tracking-[0.12em] text-[#2c332f] transition hover:text-stone-900"
+            <div
+              className="flex w-[min(100%,10.5rem)] shrink-0 flex-col justify-center border-r border-stone-200/80 py-0.5 pr-2.5"
+              title={themeSkinLabel}
             >
-              <span>岐黄智诊</span>
-              <span className="text-[10px] text-stone-400 transition group-hover:text-stone-500">
-                ·
-              </span>
-              <span className="text-[11px] tracking-[0.18em] text-stone-600 transition group-hover:text-stone-700">
-                DBCNet
-              </span>
-            </Link>
+              <p className="text-[9px] font-medium leading-none tracking-[0.16em] text-stone-500">
+                展厅导览
+              </p>
+              <div className="mt-1 flex min-w-0 items-center gap-1.5">
+                <MapPinned
+                  className="size-3.5 shrink-0 text-[color-mix(in_srgb,var(--season-accent)_52%,#78716c)] sm:size-4"
+                  aria-hidden
+                />
+                <p className="min-w-0 font-serif text-xs font-medium leading-tight tracking-[0.05em] text-[#3a4540] sm:text-[0.8125rem]">
+                  {label}
+                </p>
+              </div>
+            </div>
             <nav
               aria-label="博物馆主导航"
-              className="scrollbar-hide hidden min-h-[44px] min-w-0 flex-nowrap items-center gap-1 font-sans text-[12.5px] font-medium tracking-[0.04em] text-stone-600 lg:flex lg:justify-end lg:text-[13px]"
+              className="scrollbar-hide flex min-h-0 w-full min-w-0 flex-1 flex-wrap items-center justify-end gap-0.5 pl-0.5 pr-1.5 font-sans text-[10.5px] font-medium tracking-[0.03em] text-stone-600 sm:gap-1.5 sm:pl-1.5 sm:text-xs md:gap-1.5 md:text-[12.5px] md:tracking-[0.04em] lg:justify-end lg:gap-1.5 lg:pr-2.5 lg:text-[13px]"
             >
               {links.map(({ href, label }) =>
                 href.startsWith("/") ? (
@@ -56,8 +92,9 @@ export function MuseumNav({ className }: { className?: string }) {
                     key={href}
                     href={href}
                     className={cn(
-                      "inline-flex shrink-0 touch-manipulation items-center justify-center rounded-full px-3.5 py-2.5 text-stone-600 transition duration-200 hover:bg-stone-100/85 hover:text-stone-900 sm:py-1.5",
-                      label === "临床决策" ? "hidden xs:inline-flex" : null,
+                      "inline-flex min-h-9 shrink-0 touch-manipulation items-center justify-center rounded-full px-2 py-1.5 text-stone-600 transition duration-200 hover:bg-stone-100/90 hover:text-stone-900 sm:min-h-0 sm:px-2.5 sm:py-2.5",
+                      "md:px-3 md:py-1.5",
+                      label === "临床决策" ? "hidden min-[400px]:inline-flex" : null,
                     )}
                   >
                     {label}
@@ -66,22 +103,32 @@ export function MuseumNav({ className }: { className?: string }) {
                   <a
                     key={href}
                     href={href}
-                    className="inline-flex shrink-0 touch-manipulation items-center justify-center rounded-full px-3.5 py-2.5 text-stone-600 transition duration-200 hover:bg-stone-100/85 hover:text-stone-900 sm:py-1.5"
+                    className="inline-flex min-h-9 shrink-0 touch-manipulation items-center justify-center rounded-full px-2 py-1.5 text-stone-600 transition duration-200 hover:bg-stone-100/90 hover:text-stone-900 sm:min-h-0 sm:px-2.5 sm:py-2.5 md:px-3 md:py-1.5"
                   >
                     {label}
                   </a>
                 ),
               )}
             </nav>
-          </header>
+          </div>
+          <p
+            className="-mx-0.5 min-w-0 max-w-full flex-1 text-center text-[0.5rem] font-medium leading-tight tracking-[0.1em] text-stone-500/95 [text-wrap:balance] min-[400px]:text-[0.55rem] sm:mx-0 sm:max-w-[min(100%,18rem)] sm:text-xs sm:leading-snug lg:hidden"
+            title="多模态中医：临床与体质、知识、时令、膳食等场景"
+          >
+            临床与体质
+            <span className="text-stone-400/80">·</span>
+            知识与时令
+            <span className="text-stone-400/80">·</span>
+            一站随览
+          </p>
         </div>
 
-        <div className="museum-liquid-login-shell shrink-0">
+        <div className="museum-liquid-login-shell ml-auto shrink-0">
           <span className="museum-liquid-login-blob museum-liquid-login-blob-a" aria-hidden />
           <span className="museum-liquid-login-blob museum-liquid-login-blob-b" aria-hidden />
           <Link
             href="/login"
-            className="museum-liquid-login-link relative z-[1] inline-flex min-h-[44px] min-w-[4.5rem] items-center justify-center rounded-full px-4 py-2 font-sans text-[12.5px] font-semibold tracking-wide text-[#2f3832] transition duration-300 hover:text-stone-900"
+            className="museum-liquid-login-link relative z-[1] inline-flex min-h-[40px] min-w-[3.5rem] items-center justify-center rounded-full px-3.5 py-1.5 font-sans text-[12px] font-semibold tracking-wide text-[#2f3832] transition duration-300 hover:text-stone-900 sm:min-h-[44px] sm:min-w-[4.5rem] sm:px-4 sm:py-2 sm:text-[12.5px]"
           >
             登录
           </Link>
