@@ -32,7 +32,7 @@ export function ProfileCenter() {
   const knowledgeCount = items.filter((i) => i.kind === "knowledge" || i.kind === "term").length;
 
   return (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col gap-4 overflow-y-auto pb-4 sm:gap-5">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-6xl flex-col gap-6 overflow-y-auto pb-8">
       <ModuleHeader
         icon={UserRound}
         title="个人中心"
@@ -55,7 +55,7 @@ export function ProfileCenter() {
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="module-card p-5 sm:p-6"
+        className="module-card p-6"
       >
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-2">
@@ -69,22 +69,22 @@ export function ProfileCenter() {
         </div>
       </motion.section>
 
-      <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="module-stat-card">
+      <section className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <div className="module-stat-card p-6">
           <p className="text-xs text-muted-foreground">总收藏</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">{items.length}</p>
         </div>
-        <div className="module-stat-card">
+        <div className="module-stat-card p-6">
           <p className="text-xs text-muted-foreground">方意收藏</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">{formulaCount}</p>
         </div>
-        <div className="module-stat-card">
+        <div className="module-stat-card p-6">
           <p className="text-xs text-muted-foreground">知识收藏</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">{knowledgeCount}</p>
         </div>
       </section>
 
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <section className="grid grid-cols-2 gap-6 sm:grid-cols-4">
         <Button asChild variant="outline" className="h-11 justify-start gap-2 rounded-xl">
           <Link href="/favorites">
             <Heart className="size-4 text-season-accent" />
@@ -111,7 +111,7 @@ export function ProfileCenter() {
         </Button>
       </section>
 
-      <section className="module-card p-5 sm:p-6">
+      <section className="module-card p-6">
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="text-base font-medium text-foreground">最近收藏</h2>
           <Button asChild size="sm" variant="ghost" className="h-8 text-xs text-muted-foreground">
@@ -131,7 +131,7 @@ export function ProfileCenter() {
             {recent.map((item) => (
               <div
                 key={item.id}
-                className="module-card-soft flex items-center justify-between gap-3 px-3 py-2.5"
+                className="module-card-soft flex items-center justify-between gap-3 px-4 py-3"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">{item.title}</p>

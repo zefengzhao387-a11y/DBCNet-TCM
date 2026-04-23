@@ -1,7 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 import { FavoriteStarButton } from "@/components/favorites/FavoriteStarButton";
 import { cn } from "@/lib/utils";
 import type { FavoriteItem } from "@/stores/favorites-store";
@@ -24,11 +22,7 @@ export function PrescriptionScrollCard({
   favorite,
 }: PrescriptionScrollCardProps) {
   return (
-    <motion.div
-      whileHover={{
-        rotate: [0, -0.6, 0.5, -0.35, 0],
-        transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
-      }}
+    <div
       className={cn(
         "relative overflow-hidden rounded-3xl border border-white/50 bg-gradient-to-br from-white/[0.42] via-white/[0.28] to-white/[0.18] p-6 shadow-[0_12px_40px_rgba(42,50,44,0.08)] backdrop-blur-xl backdrop-saturate-[1.15]",
         "before:pointer-events-none before:absolute before:inset-0 before:rounded-3xl before:bg-[linear-gradient(135deg,rgba(255,255,255,0.5)_0%,transparent_42%,rgba(255,255,255,0.08)_100%)]",
@@ -78,11 +72,9 @@ export function PrescriptionScrollCard({
           </ul>
         </div>
 
-        <motion.div
+        <div
           className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-md border-2 border-[#c45c5c]/90 bg-gradient-to-br from-[#e8a0a0]/95 via-[#d06060] to-[#a83838] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_4px_14px_rgba(160,50,50,0.25)]"
           aria-hidden
-          whileHover={{ scale: 1.03 }}
-          transition={{ type: "spring", stiffness: 420, damping: 28 }}
         >
           <span
             className="select-none text-[17px] font-semibold tabular-nums text-white/95 [text-shadow:0_1px_0_rgba(0,0,0,0.15)]"
@@ -90,11 +82,11 @@ export function PrescriptionScrollCard({
           >
             {sealNumber}
           </span>
-        </motion.div>
+        </div>
       </div>
       <p className="relative z-[1] mt-5 font-sans text-[10px] leading-relaxed text-stone-400">
         示意笺 · 临床请以医师处方与医嘱为准
       </p>
-    </motion.div>
+    </div>
   );
 }

@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { PrescriptionScrollCard } from "@/components/clinical/PrescriptionScrollCard";
 import { ClinicalHeirloomReport } from "@/components/reports/ClinicalHeirloomReport";
 import { ModuleHeader } from "@/components/shell/ModuleHeader";
+import { LogicGraphCanvas } from "@/components/shell/LogicGraphCanvas";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { IntegrationDetails } from "@/components/shell/IntegrationDetails";
@@ -116,7 +117,7 @@ export function ClinicalWorkbench() {
   }
 
   return (
-    <div className="mx-auto flex h-full min-h-0 max-w-5xl flex-col gap-7 overflow-y-auto pb-6 lg:gap-10 lg:pb-10">
+    <div className="mx-auto flex h-full min-h-0 max-w-6xl flex-col gap-6 overflow-y-auto pb-8">
       <ModuleHeader
         icon={Stethoscope}
         title="智诊辅助"
@@ -136,11 +137,11 @@ export function ClinicalWorkbench() {
         }
       />
 
-      <div className="grid min-h-0 flex-1 gap-7 lg:grid-cols-12 lg:gap-10">
-        <div className="flex flex-col gap-6 lg:col-span-5">
+      <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-12">
+        <div className="flex flex-col gap-6 lg:col-span-4">
           <form
             onSubmit={onSubmit}
-            className="module-card flex flex-col gap-5 p-5 sm:p-6"
+            className="module-card p-6"
           >
             <div className="space-y-2">
               <Label htmlFor="chiefComplaint" className="text-foreground">
@@ -208,13 +209,13 @@ export function ClinicalWorkbench() {
           </IntegrationDetails>
         </div>
 
-        <div className="flex min-h-[min(24rem,50dvh)] flex-col lg:col-span-7">
+        <div className="flex min-h-[min(24rem,50dvh)] flex-col gap-6 lg:col-span-8">
           <div
             className={cn(
-              "flex flex-1 flex-col rounded-3xl border border-border/65 p-5 sm:p-6",
+              "flex flex-1 flex-col rounded-2xl p-6",
               result || loading
                 ? "module-card"
-                : "border-dashed bg-background/45",
+                : "module-card border-dashed",
             )}
           >
             {!result && !loading ? (
@@ -238,7 +239,7 @@ export function ClinicalWorkbench() {
                     正在合参辨证…
                   </p>
                   <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
-                    右侧「逻辑链」已根据主诉开始推演连线；流光将随推理步骤逐条点亮。
+                    下方「逻辑链」将根据主诉开始推演证据连线，可用于复核推理路径。
                   </p>
                 </div>
               </div>
@@ -293,11 +294,14 @@ export function ClinicalWorkbench() {
                   </div>
                 ) : null}
                 <p className="text-xs leading-relaxed text-muted-foreground">
-                  症状—证候—方药的连线与流光在右侧「逻辑链」面板；若未看到，请点击顶栏「逻辑链」展开。
+                  症状—证候—方药连线在下方「逻辑链」区域呈现，可用于复核推理路径。
                 </p>
               </div>
             ) : null}
           </div>
+          <section className="module-card-soft p-4 sm:p-5">
+            <LogicGraphCanvas className="min-h-[14rem]" />
+          </section>
         </div>
       </div>
 

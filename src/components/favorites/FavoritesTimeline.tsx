@@ -74,7 +74,7 @@ function TimelineRow({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="module-card mb-8 min-w-0 flex-1 p-4 sm:p-5"
+        className="module-card mb-8 min-w-0 flex-1 p-6"
       >
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 font-sans text-[10px] font-semibold uppercase tracking-wider text-primary">
@@ -95,7 +95,7 @@ function TimelineRow({
             {item.tags.map((t) => (
               <span
                 key={t}
-                className="rounded-full border border-border/60 bg-background/55 px-2 py-0.5 font-sans text-[11px] text-muted-foreground"
+                className="rounded-full border border-border/60 bg-background/70 px-2 py-0.5 font-sans text-[11px] text-muted-foreground"
               >
                 {t}
               </span>
@@ -125,7 +125,7 @@ export function FavoritesTimeline() {
   const sorted = [...items].sort((a, b) => b.createdAt - a.createdAt);
 
   return (
-    <div className="mx-auto flex h-full min-h-0 max-w-2xl flex-col gap-8 overflow-y-auto pb-4">
+    <div className="mx-auto flex h-full min-h-0 max-w-5xl flex-col gap-6 overflow-y-auto pb-8">
       <ModuleHeader
         icon={Star}
         title="我的收藏"
@@ -154,7 +154,7 @@ export function FavoritesTimeline() {
           ctaLabel="回首页逛逛"
         />
       ) : (
-        <div className="relative pl-1">
+        <div className="module-card relative p-6">
           {sorted.map((item, i) => (
             <TimelineRow
               key={item.id}

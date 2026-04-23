@@ -179,8 +179,8 @@ export function ConstitutionWorkbench() {
     phase === "result" ? 2 : wizardStep === 1 ? 0 : 1;
 
   return (
-    <div className="mx-auto flex h-full min-h-0 max-w-4xl flex-col gap-7 overflow-y-auto pb-6 lg:max-w-5xl lg:gap-10 lg:pb-10">
-      <header className="shrink-0 space-y-4">
+    <div className="mx-auto flex h-full min-h-0 max-w-6xl flex-col gap-6 overflow-y-auto pb-8">
+      <header className="shrink-0 space-y-6">
         <ModuleHeader
           icon={Camera}
           title="体质辨识"
@@ -243,8 +243,8 @@ export function ConstitutionWorkbench() {
       {phase === "wizard" ? (
         <>
           {wizardStep === 1 ? (
-            <section className="shrink-0 space-y-4">
-              <div className="module-card p-1 sm:p-2">
+            <section className="shrink-0 space-y-6">
+              <div className="module-card p-2">
                 <div
                   role="button"
                   tabIndex={0}
@@ -265,7 +265,7 @@ export function ConstitutionWorkbench() {
                     "relative flex min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-12 transition sm:min-h-[260px]",
                     dragOver
                       ? "border-primary/60 bg-primary/[0.06]"
-                        : "border-border/70 bg-background/55 hover:border-primary/35 hover:bg-muted/20",
+                        : "border-border/70 bg-background/60 hover:border-primary/35 hover:bg-muted/20",
                   )}
                   onClick={() => document.getElementById(inputId)?.click()}
                 >
@@ -295,7 +295,7 @@ export function ConstitutionWorkbench() {
                   )}
                 </div>
               </div>
-              <ul className="grid gap-2 text-xs leading-relaxed text-muted-foreground sm:grid-cols-3">
+              <ul className="grid gap-3 text-xs leading-relaxed text-muted-foreground sm:grid-cols-3">
                 <li className="rounded-xl bg-muted/25 px-3 py-2">避免刚进食有色饮料后拍摄</li>
                 <li className="rounded-xl bg-muted/25 px-3 py-2">勿过度用力伸舌以免舌质失真</li>
                 <li className="rounded-xl bg-muted/25 px-3 py-2">舌象为可选项，亦可仅填量表</li>
@@ -345,7 +345,7 @@ export function ConstitutionWorkbench() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  className="module-card flex flex-1 flex-col rounded-[2rem] p-6 sm:p-10"
+                  className="module-card flex flex-1 flex-col p-6 sm:p-8"
                 >
                   <div className="flex flex-1 flex-col justify-center space-y-8">
                     <div className="space-y-3 text-center sm:text-left">
@@ -479,7 +479,7 @@ export function ConstitutionWorkbench() {
             </div>
           </div>
 
-          <div className="module-card-soft rounded-3xl p-4 sm:p-6">
+          <div className="module-card-soft p-4 sm:p-6">
             <ConstitutionRadarChart data={radarData} />
           </div>
 

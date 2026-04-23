@@ -372,39 +372,25 @@
   }
 
   .module-card {
-    @apply rounded-3xl border border-border;
-    border-color: color-mix(in srgb, var(--border) 82%, transparent);
-    background:
-      linear-gradient(
-        170deg,
-        color-mix(in srgb, var(--card) 90%, rgba(255, 255, 255, 0.22)),
-        color-mix(in srgb, var(--background) 78%, rgba(255, 255, 255, 0.08))
-      );
+    @apply rounded-2xl border backdrop-blur-xl backdrop-saturate-[1.04];
+    border-color: color-mix(in srgb, var(--glass-stroke) 86%, transparent);
+    background: color-mix(in srgb, var(--glass-fill) 92%, rgba(255, 255, 255, 0.26));
     box-shadow:
-      0 14px 34px rgba(22, 33, 29, 0.08),
+      0 12px 28px rgba(22, 33, 29, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.65);
   }
 
   .module-card-soft {
-    @apply rounded-2xl border border-border;
-    border-color: color-mix(in srgb, var(--border) 72%, transparent);
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--background) 68%, rgba(255, 255, 255, 0.22)),
-        color-mix(in srgb, var(--background) 78%, rgba(255, 255, 255, 0.08))
-      );
+    @apply rounded-2xl border backdrop-blur-md backdrop-saturate-[1.03];
+    border-color: color-mix(in srgb, var(--glass-stroke) 74%, transparent);
+    background: color-mix(in srgb, var(--glass-fill) 80%, rgba(255, 255, 255, 0.18));
   }
 
   .module-stat-card {
-    @apply rounded-2xl border border-border p-4;
-    border-color: color-mix(in srgb, var(--border) 76%, transparent);
-    background: linear-gradient(
-      165deg,
-      color-mix(in srgb, var(--card) 86%, rgba(255, 255, 255, 0.18)),
-      color-mix(in srgb, var(--background) 82%, rgba(255, 255, 255, 0.1))
-    );
-    box-shadow: 0 8px 22px rgba(22, 33, 29, 0.06);
+    @apply rounded-2xl border p-4 backdrop-blur-md backdrop-saturate-[1.03];
+    border-color: color-mix(in srgb, var(--glass-stroke) 72%, transparent);
+    background: color-mix(in srgb, var(--glass-fill) 82%, rgba(255, 255, 255, 0.2));
+    box-shadow: 0 8px 20px rgba(22, 33, 29, 0.06);
   }
 
   .module-tab-link {
