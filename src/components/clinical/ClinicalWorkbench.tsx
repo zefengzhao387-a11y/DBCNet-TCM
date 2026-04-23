@@ -1,10 +1,11 @@
 "use client";
 
-import { Download, Loader2, Stethoscope } from "lucide-react";
+import { ArrowUp, Download, Loader2, Stethoscope } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { PrescriptionScrollCard } from "@/components/clinical/PrescriptionScrollCard";
 import { ClinicalHeirloomReport } from "@/components/reports/ClinicalHeirloomReport";
+import { ModuleHeader } from "@/components/shell/ModuleHeader";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { IntegrationDetails } from "@/components/shell/IntegrationDetails";
@@ -18,6 +19,7 @@ import {
 import { downloadElementAsPng } from "@/lib/heirloom-report";
 import { cn } from "@/lib/utils";
 import { useLogicGraphStore } from "@/stores/logic-graph-store";
+import { useToast } from "@/stores/toast-store";
 import { useUIStore } from "@/stores/ui-store";
 import type { ClinicalInferenceResponse } from "@/types/clinical-inference";
 
@@ -34,6 +36,7 @@ export function ClinicalWorkbench() {
   const setXaiOpen = useUIStore((s) => s.setXaiOpen);
   const setStreaming = useLogicGraphStore((s) => s.setStreaming);
   const setComplete = useLogicGraphStore((s) => s.setComplete);
+  const { toast } = useToast();
 
   const seasonalHint = `${themeSkinLabel}；饮食有节，起居有常，情志舒畅为宜。`;
 
@@ -70,9 +73,19 @@ export function ClinicalWorkbench() {
       setResult(data);
       const g = graphFromInferenceResponse(data, cc);
       setComplete(g.nodes, g.edges);
+      toast({
+        tone: "success",
+        title: "辨证结果已生成",
+        description: "已更新叙事、方笺与逻辑链。",
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "请求失败");
       setComplete(interim.nodes, interim.edges);
+      toast({
+        tone: "error",
+        title: "生成失败",
+        description: err instanceof Error ? err.message : "请稍后重试",
+      });
     } finally {
       setLoading(false);
     }
@@ -87,34 +100,47 @@ export function ClinicalWorkbench() {
         reportRef.current,
         `岐黄智诊-传家辨证笺-${new Date().toISOString().slice(0, 10)}.png`,
       );
+      toast({
+        tone: "success",
+        title: "已导出传家报告",
+      });
+    } catch {
+      toast({
+        tone: "error",
+        title: "导出失败",
+        description: "请稍后再试。",
+      });
     } finally {
       setExporting(false);
     }
   }
 
   return (
-    <div className="mx-auto flex h-full min-h-0 max-w-6xl flex-col gap-6 overflow-y-auto pb-2 lg:gap-8">
-      <header className="shrink-0 space-y-2">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <span className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-            <Stethoscope className="size-5" aria-hidden />
-          </span>
-          <div>
-            <h1 className="font-serif text-2xl font-medium tracking-wide text-foreground sm:text-[1.65rem]">
-              临床决策支持
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              录入主诉与四诊信息，获取辨证叙事与证据链提示；结果仅供辅助参考。
-            </p>
-          </div>
-        </div>
-      </header>
+    <div className="mx-auto flex h-full min-h-0 max-w-5xl flex-col gap-7 overflow-y-auto pb-6 lg:gap-10 lg:pb-10">
+      <ModuleHeader
+        icon={Stethoscope}
+        title="智诊辅助"
+        description="录入主诉与四诊信息，获取辨证叙事与证据链提示；结果仅供辅助参考。"
+        badge="Core"
+        actions={
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-9 rounded-xl text-xs"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
+            <ArrowUp className="mr-1.5 size-4" />
+            回顶部
+          </Button>
+        }
+      />
 
-      <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-12 lg:gap-8">
+      <div className="grid min-h-0 flex-1 gap-7 lg:grid-cols-12 lg:gap-10">
         <div className="flex flex-col gap-6 lg:col-span-5">
           <form
             onSubmit={onSubmit}
-            className="flex flex-col gap-5 rounded-3xl border border-border/60 bg-gradient-to-b from-card/95 to-background/30 p-5 shadow-sm sm:p-6"
+            className="module-card flex flex-col gap-5 p-5 sm:p-6"
           >
             <div className="space-y-2">
               <Label htmlFor="chiefComplaint" className="text-foreground">
@@ -128,7 +154,7 @@ export function ClinicalWorkbench() {
                 value={chiefComplaint}
                 onChange={(ev) => setChiefComplaint(ev.target.value)}
                 placeholder="请尽量按时间顺序描述：起病、性质、加重或缓解因素、伴随症状…"
-                className="w-full resize-y rounded-2xl border border-input/80 bg-background/50 px-4 py-3 text-sm leading-[1.75] text-foreground outline-none ring-offset-background placeholder:text-muted-foreground/80 focus-visible:ring-2 focus-visible:ring-ring"
+                className="w-full resize-y rounded-2xl border border-input/80 bg-background/60 px-4 py-3 text-sm leading-[1.75] text-foreground outline-none ring-offset-background placeholder:text-muted-foreground/80 focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
             <div className="space-y-2">
@@ -142,7 +168,7 @@ export function ClinicalWorkbench() {
                 value={fourNotes}
                 onChange={(ev) => setFourNotes(ev.target.value)}
                 placeholder="望诊、闻诊、问诊、切诊要点…"
-                className="w-full resize-y rounded-2xl border border-input/80 bg-background/50 px-4 py-3 text-sm leading-[1.75] text-foreground outline-none ring-offset-background placeholder:text-muted-foreground/80 focus-visible:ring-2 focus-visible:ring-ring"
+                className="w-full resize-y rounded-2xl border border-input/80 bg-background/60 px-4 py-3 text-sm leading-[1.75] text-foreground outline-none ring-offset-background placeholder:text-muted-foreground/80 focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
 
@@ -185,10 +211,10 @@ export function ClinicalWorkbench() {
         <div className="flex min-h-[min(24rem,50dvh)] flex-col lg:col-span-7">
           <div
             className={cn(
-              "flex flex-1 flex-col rounded-3xl border border-border/60 p-5 sm:p-6",
+              "flex flex-1 flex-col rounded-3xl border border-border/65 p-5 sm:p-6",
               result || loading
-                ? "bg-gradient-to-br from-card via-card to-primary/[0.03]"
-                : "border-dashed bg-muted/15",
+                ? "module-card"
+                : "border-dashed bg-background/45",
             )}
           >
             {!result && !loading ? (

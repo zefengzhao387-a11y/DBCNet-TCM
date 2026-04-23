@@ -30,7 +30,7 @@ export function KnowledgeBookmarkStrip() {
         {SAMPLES.map((row) => (
           <li
             key={row.id}
-            className="flex flex-col gap-2 rounded-2xl border border-border/50 bg-muted/10 p-4 transition hover:border-primary/25 hover:bg-muted/20"
+            className="module-card-soft flex flex-col gap-2 p-4 transition hover:border-primary/25 hover:bg-muted/20"
           >
             <div className="flex items-start justify-between gap-2">
               <p className="font-serif text-[15px] font-medium tracking-[0.08em] text-foreground">

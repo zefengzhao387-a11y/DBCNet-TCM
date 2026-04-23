@@ -3,6 +3,7 @@ import { Cinzel, Noto_Serif_SC } from "next/font/google";
 import localFont from "next/font/local";
 
 import { AppShell } from "@/components/shell/AppShell";
+import { ToastViewport } from "@/components/ui/ToastViewport";
 import { SEASON_INLINE_INIT } from "@/lib/season-inline-script";
 import { ZEN_INLINE_INIT } from "@/lib/zen-inline-script";
 
@@ -68,6 +69,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${notoSerifSC.variable} min-h-screen font-sans antialiased`}
       >
         <AppShell>{children}</AppShell>
+        <ToastViewport />
       </body>
     </html>
   );

@@ -51,9 +51,9 @@ export function Topbar() {
           variant="outline"
           size="icon"
           className="size-11 shrink-0 rounded-xl border-border/70 bg-background/40 sm:size-10"
-          title="返回展厅首页"
+          title="返回首页"
         >
-          <Link href="/" aria-label="返回展厅首页">
+          <Link href="/" aria-label="返回首页">
             <Home className="size-[1.125rem] text-season-accent" />
           </Link>
         </Button>

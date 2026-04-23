@@ -16,7 +16,7 @@ export async function GET() {
     const claims = await readSessionToken(token);
     const user = await prisma.user.findUnique({
       where: { id: claims.sub },
-      select: { id: true, staffId: true, displayName: true },
+      select: { id: true, email: true, displayName: true },
     });
     if (!user) {
       return NextResponse.json({ user: null }, { status: 401 });

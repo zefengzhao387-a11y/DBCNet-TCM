@@ -7,41 +7,41 @@ import { prisma } from "@/lib/db";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  let body: { staffId?: string; password?: string };
+  let body: { email?: string; password?: string; staffId?: string };
   try {
-    body = (await request.json()) as { staffId?: string; password?: string };
+    body = (await request.json()) as { email?: string; password?: string; staffId?: string };
   } catch {
     return NextResponse.json({ error: "请求体无效" }, { status: 400 });
   }
 
-  const rawId = String(body.staffId ?? "").trim();
+  const raw = String(body.email ?? body.staffId ?? "").trim();
   const password = String(body.password ?? "");
-  const staffId = rawId.toLowerCase();
+  const email = raw.toLowerCase();
 
-  if (!staffId || !password) {
-    return NextResponse.json({ error: "请输入工号与密码" }, { status: 400 });
+  if (!email || !password) {
+    return NextResponse.json({ error: "请输入邮箱与密码" }, { status: 400 });
   }
 
-  const user = await prisma.user.findUnique({ where: { staffId } });
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
-    return NextResponse.json({ error: "工号或密码不正确" }, { status: 401 });
+    return NextResponse.json({ error: "邮箱或密码不正确" }, { status: 401 });
   }
 
   const ok = await compare(password, user.passwordHash);
   if (!ok) {
-    return NextResponse.json({ error: "工号或密码不正确" }, { status: 401 });
+    return NextResponse.json({ error: "邮箱或密码不正确" }, { status: 401 });
   }
 
   const token = await createSessionToken({
     sub: user.id,
-    staffId: user.staffId,
+    email: user.email,
     displayName: user.displayName,
   });
 
   const res = NextResponse.json({
     user: {
       id: user.id,
-      staffId: user.staffId,
+      email: user.email,
       displayName: user.displayName,
     },
   });

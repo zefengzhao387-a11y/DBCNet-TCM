@@ -182,7 +182,7 @@ export function MuseumDailySeason() {
                   舌象 + 问卷
                 </h3>
                 <p className="mt-2 max-w-[14rem] font-sans text-[13px] font-light leading-relaxed text-muted-foreground">
-                  多模态体质辨识入口，结果可与临床决策台联动（示意）。
+                  多模态体质辨识入口，结果可与智诊辅助结果联动（示意）。
                 </p>
               </div>
               <span className="mt-6 inline-flex items-center gap-2 font-sans text-[13px] font-medium text-[color-mix(in_srgb,var(--season-accent)_70%,#a3a39a)]">

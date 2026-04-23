@@ -3,7 +3,7 @@ import { jwtVerify } from "jose/jwt/verify";
 
 import { SESSION_COOKIE_NAME } from "@/lib/auth-token";
 
-const PROTECTED = ["/clinical", "/constitution", "/knowledge", "/favorites"];
+const PROTECTED = ["/clinical", "/constitution", "/knowledge", "/favorites", "/profile"];
 
 function mustAuth(pathname: string) {
   return PROTECTED.some((p) => pathname === p || pathname.startsWith(`${p}/`));
@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
 
   const secret = process.env.AUTH_SECRET;
   if (!secret || secret.length < 16) {
-    console.error("[auth] 缺少至少 16 位 AUTH_SECRET，已拦截工作站路由。请在 .env 中设置。");
+    console.error("[auth] 缺少至少 16 位 AUTH_SECRET，已拦截受保护功能页。请在 .env 中设置。");
     const login = new URL("/login", request.url);
     login.searchParams.set("from", pathname);
     return NextResponse.redirect(login);
@@ -51,5 +51,7 @@ export const config = {
     "/knowledge/:path*",
     "/favorites",
     "/favorites/:path*",
+    "/profile",
+    "/profile/:path*",
   ],
 };

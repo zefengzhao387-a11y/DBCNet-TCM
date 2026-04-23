@@ -19,8 +19,8 @@ const nav: {
   label: string;
   anchorId?: string;
 }[] = [
-  { href: "/", icon: Home, label: "展厅首页" },
-  { href: "/clinical", icon: Stethoscope, label: "临床决策" },
+  { href: "/", icon: Home, label: "首页" },
+  { href: "/clinical", icon: Stethoscope, label: "智诊辅助" },
   { href: "/constitution", icon: Camera, label: "体质辨识" },
   { href: "/knowledge", icon: BookOpen, label: "知识库" },
   { href: "/favorites", icon: Star, label: "收藏", anchorId: "favorites-nav-anchor" },
@@ -69,7 +69,7 @@ export function Sidebar() {
               <Link
                 href="/"
                 className="flex min-w-0 items-center gap-2.5 text-sm font-semibold tracking-tight text-foreground transition hover:text-primary"
-                title="返回展厅首页"
+                title="返回首页"
               >
                 <DbcnetMark aria-hidden />
                 <span className="truncate">岐黄智诊</span>
@@ -79,7 +79,7 @@ export function Sidebar() {
             <Link
               href="/"
               className="mb-0.5 flex h-12 w-12 items-center justify-center transition hover:opacity-90"
-              title="返回展厅首页"
+              title="返回首页"
             >
               <DbcnetMark className="!h-11 !w-11" />
             </Link>
@@ -149,7 +149,7 @@ export function Sidebar() {
 
         <div className="mt-auto border-t border-border/60 pt-3">
           <Button
-            type="button"
+            asChild
             variant="ghost"
             className={cn(
               "h-12 min-h-12 w-full rounded-2xl text-muted-foreground hover:text-foreground sm:h-11 sm:min-h-0",
@@ -157,10 +157,12 @@ export function Sidebar() {
             )}
             title="个人中心"
           >
-            <UserRound className="size-[1.125rem] shrink-0 text-season-accent" />
-            {expanded ? (
-              <span className="text-sm font-medium">个人中心</span>
-            ) : null}
+            <Link href="/profile" className="flex w-full items-center">
+              <UserRound className="size-[1.125rem] shrink-0 text-season-accent" />
+              {expanded ? (
+                <span className="ml-3 text-sm font-medium">个人中心</span>
+              ) : null}
+            </Link>
           </Button>
         </div>
       </motion.aside>

@@ -8,6 +8,7 @@ import {
   Check,
   Download,
   Loader2,
+  ArrowUp,
   Sparkles,
   Upload,
 } from "lucide-react";
@@ -15,12 +16,14 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import { ConstitutionRadarChart, type RadarDatum } from "@/components/constitution/ConstitutionRadarChart";
 import { ConstitutionHeirloomReport } from "@/components/reports/ConstitutionHeirloomReport";
+import { ModuleHeader } from "@/components/shell/ModuleHeader";
 import { Button } from "@/components/ui/button";
 import { IntegrationDetails } from "@/components/shell/IntegrationDetails";
 import { requestConstitutionScreening } from "@/lib/api/constitution-screening";
 import { hasPublicApiOrigin } from "@/lib/api/public-origin";
 import { downloadElementAsPng } from "@/lib/heirloom-report";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/stores/toast-store";
 import type { ConstitutionScreeningResponse } from "@/types/constitution-screening";
 
 const QUESTIONS = [
@@ -90,6 +93,7 @@ export function ConstitutionWorkbench() {
   const [exporting, setExporting] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
   const previewUrl = useObjectUrl(file);
+  const { toast } = useToast();
 
   const radarData = useMemo(
     () => (result ? toRadarData(result.constitutionTypes) : []),
@@ -127,8 +131,17 @@ export function ConstitutionWorkbench() {
       });
       setResult(data);
       setPhase("result");
+      toast({
+        tone: "success",
+        title: "体质报告已生成",
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "请求失败");
+      toast({
+        tone: "error",
+        title: "生成失败",
+        description: err instanceof Error ? err.message : "请稍后重试",
+      });
     } finally {
       setLoading(false);
     }
@@ -143,6 +156,16 @@ export function ConstitutionWorkbench() {
         reportRef.current,
         `岐黄智诊-体质笺-${new Date().toISOString().slice(0, 10)}.png`,
       );
+      toast({
+        tone: "success",
+        title: "已导出体质笺",
+      });
+    } catch {
+      toast({
+        tone: "error",
+        title: "导出失败",
+        description: "请稍后再试。",
+      });
     } finally {
       setExporting(false);
     }
@@ -156,25 +179,26 @@ export function ConstitutionWorkbench() {
     phase === "result" ? 2 : wizardStep === 1 ? 0 : 1;
 
   return (
-    <div className="mx-auto flex h-full min-h-0 max-w-3xl flex-col gap-6 overflow-y-auto pb-2 lg:max-w-5xl">
+    <div className="mx-auto flex h-full min-h-0 max-w-4xl flex-col gap-7 overflow-y-auto pb-6 lg:max-w-5xl lg:gap-10 lg:pb-10">
       <header className="shrink-0 space-y-4">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2.5">
-              <span className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <Camera className="size-5" aria-hidden />
-              </span>
-              <div>
-                <h1 className="font-serif text-2xl font-medium tracking-wide text-foreground sm:text-[1.65rem]">
-                  体质辨识
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  舌象与问卷结合，生成倾向性参考（非医疗诊断）。
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ModuleHeader
+          icon={Camera}
+          title="体质辨识"
+          description="舌象与问卷结合，生成倾向性参考（非医疗诊断）。"
+          badge="Core"
+          actions={
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-9 rounded-xl text-xs"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              <ArrowUp className="mr-1.5 size-4" />
+              回顶部
+            </Button>
+          }
+        />
 
         <div className="flex items-center gap-2 sm:gap-3" aria-hidden>
           {stepLabels.map((label, i) => {
@@ -220,7 +244,7 @@ export function ConstitutionWorkbench() {
         <>
           {wizardStep === 1 ? (
             <section className="shrink-0 space-y-4">
-              <div className="rounded-3xl border border-border/60 bg-gradient-to-b from-card/90 to-background/40 p-1 shadow-sm sm:p-2">
+              <div className="module-card p-1 sm:p-2">
                 <div
                   role="button"
                   tabIndex={0}
@@ -241,7 +265,7 @@ export function ConstitutionWorkbench() {
                     "relative flex min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-12 transition sm:min-h-[260px]",
                     dragOver
                       ? "border-primary/60 bg-primary/[0.06]"
-                      : "border-border/70 bg-muted/10 hover:border-primary/35 hover:bg-muted/20",
+                        : "border-border/70 bg-background/55 hover:border-primary/35 hover:bg-muted/20",
                   )}
                   onClick={() => document.getElementById(inputId)?.click()}
                 >
@@ -321,7 +345,7 @@ export function ConstitutionWorkbench() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex flex-1 flex-col rounded-[2rem] border border-border/50 bg-gradient-to-b from-card/95 to-background/30 p-6 shadow-sm sm:p-10"
+                  className="module-card flex flex-1 flex-col rounded-[2rem] p-6 sm:p-10"
                 >
                   <div className="flex flex-1 flex-col justify-center space-y-8">
                     <div className="space-y-3 text-center sm:text-left">
@@ -426,7 +450,7 @@ export function ConstitutionWorkbench() {
           </IntegrationDetails>
         </>
       ) : result ? (
-        <section className="space-y-6 rounded-3xl border border-border/60 bg-gradient-to-br from-card via-card to-primary/[0.04] p-6 shadow-sm sm:p-8">
+        <section className="module-card space-y-6 p-6 sm:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h2 className="font-serif text-xl font-medium text-foreground">您的体质倾向</h2>
@@ -455,7 +479,7 @@ export function ConstitutionWorkbench() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-border/50 bg-background/40 p-4 sm:p-6">
+          <div className="module-card-soft rounded-3xl p-4 sm:p-6">
             <ConstitutionRadarChart data={radarData} />
           </div>
 
@@ -481,7 +505,7 @@ export function ConstitutionWorkbench() {
             })}
           </ul>
 
-          <div className="rounded-2xl border border-border/50 bg-background/50 p-4 sm:p-5">
+          <div className="module-card-soft p-4 sm:p-5">
             <p className="whitespace-pre-wrap text-sm leading-[1.85] text-foreground/90">{result.narrative}</p>
           </div>
 

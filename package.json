@@ -5,8 +5,10 @@
   "scripts": {
     "clean": "node -e \"const fs=require('fs');try{fs.rmSync('.next',{recursive:true,force:true});}catch(e){if(e.code!=='ENOENT')throw e;}\"",
     "dev": "next dev",
+    "dev:safe": "node scripts/dev-safe.mjs",
     "dev:clean": "npm run clean && next dev",
     "build": "next build",
+    "build:safe": "node scripts/build-safe.mjs",
     "build:clean": "npm run clean && next build",
     "redeploy": "npm run build:clean && next start",
     "start": "next start",

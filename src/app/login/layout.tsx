@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "入室 · 岐黄智诊",
-  description: "演示鉴权入口；背景随四时气韵流动。",
+  title: "登录 · 岐黄智诊",
+  description: "使用邮箱登录智诊服务。",
 };
 
 export default function LoginLayout({

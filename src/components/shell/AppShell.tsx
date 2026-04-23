@@ -11,16 +11,27 @@ import { useAuthStore } from "@/stores/auth-store";
 import { syncZenFromDocument, useUIStore } from "@/stores/ui-store";
 
 import { ZenModeToggle } from "@/components/zen/ZenModeToggle";
+import { MuseumMobileDock } from "@/components/museum/MuseumMobileDock";
+import { MuseumNav } from "@/components/museum/MuseumNav";
 
 import { AppWorkspaceDock } from "./AppWorkspaceDock";
+import { ModuleRouteBar } from "./ModuleRouteBar";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { XaiPanel } from "./XaiPanel";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isLogin = pathname === "/login";
+  const isAuthPage = pathname === "/login" || pathname === "/register";
   const isMuseumHome = pathname === "/";
+  const isCoreModuleRoute = ["/clinical", "/constitution", "/knowledge", "/favorites", "/profile"].some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
+  const isDiagnosisFlowRoute =
+    pathname === "/clinical" ||
+    pathname.startsWith("/clinical/") ||
+    pathname === "/constitution" ||
+    pathname.startsWith("/constitution/");
   const { season } = useSeasonTheme();
   const setXaiOpen = useUIStore((s) => s.setXaiOpen);
   const zenMode = useUIStore((s) => s.zenMode);
@@ -31,25 +42,26 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (isLogin) return;
+    if (isAuthPage) return;
     void fetchSession();
-  }, [isLogin, fetchSession]);
+  }, [isAuthPage, fetchSession]);
 
-  /** 进入临床页默认展开逻辑链，避免右侧被裁切时误以为「没有面板」 */
+  /** 进入智诊相关页时默认展开逻辑链，避免右侧被裁切时误以为「没有面板」 */
   useLayoutEffect(() => {
     if (pathname === "/clinical") {
       setXaiOpen(true);
     }
   }, [pathname, setXaiOpen]);
 
-  const shellPadding = !isMuseumHome && !isLogin;
+  const shellPadding = !isMuseumHome && !isAuthPage && !isCoreModuleRoute;
 
   return (
     <div
       className={cn(
         "relative z-0 flex w-full",
         isMuseumHome && "min-h-screen overflow-x-hidden overflow-y-auto",
-        isLogin && "h-[100dvh] max-h-[100dvh] overflow-hidden app-safe-padding",
+        isCoreModuleRoute && "min-h-screen overflow-x-hidden overflow-y-auto",
+        isAuthPage && "h-[100dvh] max-h-[100dvh] overflow-hidden app-safe-padding",
         shellPadding &&
           "h-[100dvh] max-h-[100dvh] overflow-hidden app-safe-padding sm:gap-1",
       )}
@@ -59,16 +71,18 @@ export function AppShell({ children }: { children: ReactNode }) {
           "pointer-events-none z-0 overflow-hidden translate-z-0 [backface-visibility:hidden]",
           isMuseumHome
             ? "absolute inset-0 min-h-full"
-            : "fixed inset-0",
+            : isCoreModuleRoute
+              ? "absolute inset-0 min-h-full"
+              : "fixed inset-0",
         )}
       >
         <Atmosphere
           season={season}
           zenMode={zenMode}
-          layout={isMuseumHome ? "scroll" : "viewport"}
+          layout={isMuseumHome || isCoreModuleRoute ? "scroll" : "viewport"}
         />
       </div>
-      {!isMuseumHome ? (
+      {!isMuseumHome && !isCoreModuleRoute ? (
         <div
           className="pointer-events-none absolute inset-0 opacity-40"
           style={{
@@ -79,9 +93,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         />
       ) : null}
       <AnimatePresence mode="wait">
-        {isLogin ? (
+        {isAuthPage ? (
           <motion.div
-            key="route-login"
+            key="route-auth"
             initial={{ opacity: 0, filter: "blur(14px)", y: 18 }}
             animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
             exit={{ opacity: 0, filter: "blur(10px)", y: -12 }}
@@ -110,6 +124,57 @@ export function AppShell({ children }: { children: ReactNode }) {
             className="relative z-10 w-full min-w-0"
           >
             {children}
+          </motion.div>
+        ) : isCoreModuleRoute ? (
+          <motion.div
+            key="route-core-module"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+            className="relative z-10 w-full min-w-0"
+          >
+            <div className="museum-ambient museum-airy text-foreground relative min-h-screen">
+              <div className="relative z-10 mx-auto flex w-full max-w-[min(100%,106rem)] flex-col museum-gutter-x pb-28 [text-rendering:optimizeLegibility] lg:pb-0">
+                <MuseumNav focusMode />
+                <section className="pb-24 pt-[max(7.5rem,calc(env(safe-area-inset-top,0px)+6rem))] sm:pt-[max(8.5rem,calc(env(safe-area-inset-top,0px)+6.6rem))] lg:pb-16 lg:pt-[max(9.5rem,calc(env(safe-area-inset-top,0px)+7rem))]">
+                  <div className="relative min-h-[calc(100dvh-11.5rem)] sm:min-h-[calc(100dvh-12rem)] lg:min-h-[calc(100dvh-13rem)]">
+                    <div
+                      className="pointer-events-none absolute inset-0 rounded-[2rem]"
+                      style={{
+                        background:
+                          "linear-gradient(175deg, color-mix(in_srgb,var(--background)_80%,transparent), color-mix(in_srgb,var(--background)_64%,transparent))",
+                      }}
+                      aria-hidden
+                    />
+                    <div
+                      className="pointer-events-none absolute -left-12 -top-10 h-44 w-44 rounded-full opacity-50 blur-3xl"
+                      style={{ background: "color-mix(in srgb, var(--season-accent) 30%, transparent)" }}
+                      aria-hidden
+                    />
+                    <div
+                      className="pointer-events-none absolute -bottom-10 -right-8 h-40 w-40 rounded-full opacity-40 blur-3xl"
+                      style={{ background: "color-mix(in srgb, var(--primary) 28%, transparent)" }}
+                      aria-hidden
+                    />
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={pathname}
+                        initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+                        transition={{ duration: 0.34, ease: [0.2, 0.9, 0.2, 1] }}
+                        className="relative z-10 px-2 pb-3 sm:px-4 lg:px-6"
+                      >
+                        {!isDiagnosisFlowRoute ? <ModuleRouteBar /> : null}
+                        {children}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </section>
+              </div>
+              <MuseumMobileDock />
+            </div>
           </motion.div>
         ) : (
           <motion.div

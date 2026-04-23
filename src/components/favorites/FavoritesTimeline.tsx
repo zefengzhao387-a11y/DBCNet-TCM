@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BookMarked, ChefHat, Sparkles, Star } from "lucide-react";
-import Link from "next/link";
+import { ArrowUp, BookMarked, ChefHat, Sparkles, Star } from "lucide-react";
 
+import { ModuleEmptyState } from "@/components/shell/ModuleEmptyState";
+import { ModuleHeader } from "@/components/shell/ModuleHeader";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/stores/toast-store";
 import type { FavoriteItem, FavoriteKind } from "@/stores/favorites-store";
 import { useFavoritesStore } from "@/stores/favorites-store";
 
@@ -58,7 +60,7 @@ function TimelineRow({
   return (
     <div className="relative flex gap-4 sm:gap-6">
       <div className="flex flex-col items-center">
-        <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-border/60 bg-card/80 text-season-accent shadow-sm backdrop-blur-sm">
+        <div className="module-icon-pill flex size-11 shrink-0 items-center justify-center text-season-accent">
           <Icon className="size-5" strokeWidth={1.35} aria-hidden />
         </div>
         {!last ? (
@@ -72,7 +74,7 @@ function TimelineRow({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="mb-8 min-w-0 flex-1 rounded-2xl border border-border/50 bg-gradient-to-br from-card/95 to-background/30 p-4 shadow-sm sm:p-5"
+        className="module-card mb-8 min-w-0 flex-1 p-4 sm:p-5"
       >
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 font-sans text-[10px] font-semibold uppercase tracking-wider text-primary">
@@ -93,7 +95,7 @@ function TimelineRow({
             {item.tags.map((t) => (
               <span
                 key={t}
-                className="rounded-full border border-border/60 bg-background/40 px-2 py-0.5 font-sans text-[11px] text-muted-foreground"
+                className="rounded-full border border-border/60 bg-background/55 px-2 py-0.5 font-sans text-[11px] text-muted-foreground"
               >
                 {t}
               </span>
@@ -119,35 +121,38 @@ function TimelineRow({
 export function FavoritesTimeline() {
   const items = useFavoritesStore((s) => s.items);
   const remove = useFavoritesStore((s) => s.remove);
+  const { toast } = useToast();
   const sorted = [...items].sort((a, b) => b.createdAt - a.createdAt);
 
   return (
     <div className="mx-auto flex h-full min-h-0 max-w-2xl flex-col gap-8 overflow-y-auto pb-4">
-      <header className="shrink-0 space-y-2">
-        <div className="flex items-center gap-2.5">
-          <span className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-            <Star className="size-5 fill-amber-400/30 text-amber-600" aria-hidden />
-          </span>
-          <div>
-            <h1 className="font-serif text-2xl font-medium tracking-wide text-foreground sm:text-[1.65rem]">
-              我的收藏
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              时光轴记录你点亮的方笺、词条与膳食灵感。
-            </p>
-          </div>
-        </div>
-      </header>
+      <ModuleHeader
+        icon={Star}
+        title="我的收藏"
+        description="时光轴记录你点亮的方笺、词条与膳食灵感。"
+        badge="Core"
+        actions={
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-9 rounded-xl text-xs"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
+            <ArrowUp className="mr-1.5 size-4" />
+            回顶部
+          </Button>
+        }
+      />
 
       {sorted.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-border/70 bg-muted/10 px-6 py-16 text-center">
-          <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-            还没有收藏。去临床页、展厅「每日一词」或膳食卡片上，点一下星星试试吧。
-          </p>
-          <Button asChild variant="secondary" className="rounded-2xl">
-            <Link href="/">回展厅逛逛</Link>
-          </Button>
-        </div>
+        <ModuleEmptyState
+          icon={Star}
+          title="还没有收藏"
+          description="去智诊页、首页每日一词或膳食卡片，点一下星星即可加入。"
+          ctaHref="/"
+          ctaLabel="回首页逛逛"
+        />
       ) : (
         <div className="relative pl-1">
           {sorted.map((item, i) => (
@@ -155,7 +160,14 @@ export function FavoritesTimeline() {
               key={item.id}
               item={item}
               last={i === sorted.length - 1}
-              onRemove={() => remove(item.id)}
+              onRemove={() => {
+                remove(item.id);
+                toast({
+                  tone: "success",
+                  title: "已移出收藏",
+                  description: item.title,
+                });
+              }}
             />
           ))}
         </div>

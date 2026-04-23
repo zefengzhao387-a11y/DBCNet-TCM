@@ -12,11 +12,11 @@ datasource db {
   provider = "postgresql"
 }
 
-/// 临床/工作站登录用户（工号 + 密码；密码仅存哈希）
+/// 终端用户：邮箱注册登录，密码仅存哈希
 model User {
   id           String   @id @default(cuid())
-  /// 登录名，唯一、存小写
-  staffId      String   @unique
+  /// 登录邮箱，唯一、小写
+  email        String   @unique
   passwordHash String
   displayName  String
   createdAt    DateTime @default(now())

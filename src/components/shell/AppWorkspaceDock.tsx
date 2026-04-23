@@ -7,21 +7,21 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { href: "/", label: "展厅", shortLabel: "展厅", Icon: Home },
-  { href: "/clinical", label: "临床决策", shortLabel: "临床", Icon: Stethoscope },
-  { href: "/constitution", label: "体质辨识", shortLabel: "体质", Icon: Camera },
-  { href: "/knowledge", label: "知识库", shortLabel: "知识", Icon: BookOpen },
+  { href: "/", label: "首页", shortLabel: "首页", Icon: Home },
+  { href: "/clinical", label: "智诊", shortLabel: "智诊", Icon: Stethoscope },
+  { href: "/constitution", label: "体质", shortLabel: "体质", Icon: Camera },
+  { href: "/knowledge", label: "知识", shortLabel: "知识", Icon: BookOpen },
 ] as const;
 
 /**
- * 窄屏工作台底栏：固定四大入口，避免用户困在子页无法回到展厅首页。
+ * 窄屏底栏：固定主入口，方便回到首页与智诊/体质/知识等。
  */
 export function AppWorkspaceDock() {
   const pathname = usePathname();
 
   return (
     <nav
-      aria-label="工作台主导航"
+      aria-label="主功能导航"
       className="pointer-events-none fixed inset-x-0 bottom-0 z-[75] flex justify-center pb-[max(0.35rem,env(safe-area-inset-bottom,0px))] pt-2 lg:hidden"
     >
       <div

@@ -9,16 +9,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/stores/auth-store";
 
-function LoginFormInner() {
+function RegisterFormInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from") || "/";
-  const login = useAuthStore((s) => s.login);
+  const register = useAuthStore((s) => s.register);
   const fetchSession = useAuthStore((s) => s.fetchSession);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const sessionReady = useAuthStore((s) => s.sessionReady);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -39,7 +40,7 @@ function LoginFormInner() {
     setError(null);
     setSubmitting(true);
     try {
-      const res = await login(email, password);
+      const res = await register({ email, password, displayName });
       if (res.error) {
         setError(res.error);
         return;
@@ -63,8 +64,6 @@ function LoginFormInner() {
     return null;
   }
 
-  const regHref = from && from !== "/" ? `/register?from=${encodeURIComponent(from)}` : "/register";
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
@@ -72,17 +71,17 @@ function LoginFormInner() {
       transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
       className="jade-login-card mx-auto w-full max-w-[min(22rem,calc(100vw-2rem))] rounded-[2rem] px-7 py-10 sm:px-9 sm:py-12"
     >
-      <div className="mb-10 space-y-2 text-center">
+      <div className="mb-8 space-y-2 text-center">
         <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.42em] text-muted-foreground">
           岐黄智诊
         </p>
-        <h1 className="font-serif text-2xl font-medium tracking-[0.2em] text-foreground">欢迎回来</h1>
+        <h1 className="font-serif text-2xl font-medium tracking-[0.2em] text-foreground">创建账号</h1>
         <p className="font-sans text-[13px] font-light text-muted-foreground">
-          用邮箱进入你的体质辨识与辨证等智能服务
+          以邮箱加入，开启体质与辨证等智能服务
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {error ? (
           <p className="text-center text-[13px] text-destructive" role="alert">
             {error}
@@ -100,19 +99,34 @@ function LoginFormInner() {
             onChange={(ev) => setEmail(ev.target.value)}
             className="h-12 rounded-2xl border-white/40 bg-white/25 text-[15px] shadow-inner backdrop-blur-sm placeholder:text-muted-foreground/75 focus-visible:ring-2 focus-visible:ring-primary/35"
             disabled={submitting}
+            required
           />
         </div>
         <div className="space-y-2">
           <Input
-            id="password"
+            id="register-displayName"
+            name="displayName"
+            autoComplete="nickname"
+            placeholder="怎么称呼你（1～32 字）"
+            value={displayName}
+            onChange={(ev) => setDisplayName(ev.target.value)}
+            className="h-12 rounded-2xl border-white/40 bg-white/25 text-[15px] shadow-inner backdrop-blur-sm placeholder:text-muted-foreground/75 focus-visible:ring-2 focus-visible:ring-primary/35"
+            disabled={submitting}
+          />
+        </div>
+        <div className="space-y-2">
+          <Input
+            id="register-password"
             name="password"
             type="password"
-            autoComplete="current-password"
-            placeholder="密码"
+            autoComplete="new-password"
+            placeholder="密码（至少 8 位）"
             value={password}
             onChange={(ev) => setPassword(ev.target.value)}
             className="h-12 rounded-2xl border-white/40 bg-white/25 text-[15px] shadow-inner backdrop-blur-sm placeholder:text-muted-foreground/75 focus-visible:ring-2 focus-visible:ring-primary/35"
             disabled={submitting}
+            required
+            minLength={8}
           />
         </div>
         <Button
@@ -120,26 +134,23 @@ function LoginFormInner() {
           disabled={submitting}
           className="h-12 w-full rounded-2xl text-[15px] tracking-[0.12em] shadow-md"
         >
-          {submitting ? "进入中…" : "进入"}
+          {submitting ? "创建中…" : "注册并进入"}
         </Button>
         <p className="text-center text-[13px] text-muted-foreground">
-          没有账号？{" "}
+          已有账号？{" "}
           <Link
             className="font-medium text-foreground underline-offset-2 hover:underline"
-            href={regHref}
+            href={from && from !== "/" ? `/login?from=${encodeURIComponent(from)}` : "/login"}
           >
-            注册
+            去登录
           </Link>
-        </p>
-        <p className="text-center font-sans text-[10px] leading-relaxed text-muted-foreground/90">
-          账号信息存于服务数据库，请妥善设置 AUTH_SECRET 以启用会话
         </p>
       </form>
     </motion.div>
   );
 }
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <Suspense
       fallback={
@@ -148,7 +159,7 @@ export default function LoginPage() {
         </div>
       }
     >
-      <LoginFormInner />
+      <RegisterFormInner />
     </Suspense>
   );
 }

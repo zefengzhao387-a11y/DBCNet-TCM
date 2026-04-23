@@ -6,15 +6,15 @@ import { prisma } from "../src/lib/db";
 async function main() {
   const passwordHash = await hash("demo1234", 10);
   await prisma.user.upsert({
-    where: { staffId: "demo" },
+    where: { email: "demo@example.com" },
     create: {
-      staffId: "demo",
+      email: "demo@example.com",
       passwordHash,
-      displayName: "演示医师",
+      displayName: "智诊体验用户",
     },
     update: {
       passwordHash,
-      displayName: "演示医师",
+      displayName: "智诊体验用户",
     },
   });
 }

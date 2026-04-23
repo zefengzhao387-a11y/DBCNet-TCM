@@ -56,7 +56,7 @@ export function LogicGraphCanvas({ className }: { className?: string }) {
         )}
       >
         <p className="leading-relaxed">
-          在临床页生成辨证时，此处将同步展示
+          在智诊页生成辨证时，此处将同步展示
           <span className="text-foreground/80">症状 → 证候 → 方药</span>
           的推理连线与流光。
         </p>

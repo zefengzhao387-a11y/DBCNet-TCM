@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export type AuthUser = {
   id: string;
-  staffId: string;
+  email: string;
   displayName: string;
 };
 
@@ -12,7 +12,12 @@ type AuthState = {
   /** 已尝试与 /api/auth/me 同步（含失败） */
   sessionReady: boolean;
   fetchSession: () => Promise<void>;
-  login: (staffId: string, password: string) => Promise<{ error?: string }>;
+  login: (email: string, password: string) => Promise<{ error?: string }>;
+  register: (params: {
+    email: string;
+    password: string;
+    displayName: string;
+  }) => Promise<{ error?: string }>;
   logout: () => Promise<void>;
 };
 
@@ -37,15 +42,32 @@ export const useAuthStore = create<AuthState>()((set) => ({
       set({ isAuthenticated: false, user: null, sessionReady: true });
     }
   },
-  login: async (staffId, password) => {
+  login: async (email, password) => {
     const r = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ staffId, password }),
+      body: JSON.stringify({ email, password }),
     });
     const d = (await r.json().catch(() => ({}))) as { error?: string; user?: AuthUser };
     if (!r.ok) {
       return { error: typeof d.error === "string" && d.error ? d.error : "登录失败" };
+    }
+    if (d.user) {
+      set({ isAuthenticated: true, user: d.user, sessionReady: true });
+    } else {
+      set({ isAuthenticated: false, user: null, sessionReady: true });
+    }
+    return {};
+  },
+  register: async ({ email, password, displayName }) => {
+    const r = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, displayName }),
+    });
+    const d = (await r.json().catch(() => ({}))) as { error?: string; user?: AuthUser };
+    if (!r.ok) {
+      return { error: typeof d.error === "string" && d.error ? d.error : "注册失败" };
     }
     if (d.user) {
       set({ isAuthenticated: true, user: d.user, sessionReady: true });

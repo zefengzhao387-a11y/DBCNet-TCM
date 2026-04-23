@@ -16,11 +16,11 @@ function getAuthSecretKey(): Uint8Array {
 
 export async function createSessionToken(payload: {
   sub: string;
-  staffId: string;
+  email: string;
   displayName: string;
 }): Promise<string> {
   return new SignJWT({
-    staffId: payload.staffId,
+    email: payload.email,
     displayName: payload.displayName,
   })
     .setProtectedHeader({ alg: "HS256" })
@@ -36,12 +36,17 @@ export async function readSessionToken(token: string) {
   if (typeof sub !== "string" || !sub) {
     throw new Error("invalid sub");
   }
-  const staffId = payload.staffId;
+  const emailFromClaim =
+    typeof payload.email === "string"
+      ? payload.email
+      : typeof (payload as { staffId?: unknown }).staffId === "string"
+        ? ((payload as { staffId: string }).staffId)
+        : null;
   const displayName = payload.displayName;
-  if (typeof staffId !== "string" || typeof displayName !== "string") {
+  if (typeof emailFromClaim !== "string" || !emailFromClaim || typeof displayName !== "string") {
     throw new Error("invalid claims");
   }
-  return { sub, staffId, displayName };
+  return { sub, email: emailFromClaim, displayName };
 }
 
 export { MAX_AGE_S };
