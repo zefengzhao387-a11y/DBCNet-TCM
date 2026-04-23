@@ -1,10 +1,12 @@
 "use client";
 
-import { ArrowLeft, MapPinned } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { DbcnetMark } from "@/components/brand/DbcnetMark";
+import { getDailyTcmForDate } from "@/data/daily-tcm";
 import { ZenModeToggle } from "@/components/zen/ZenModeToggle";
 import { useSeasonTheme } from "@/hooks/useSeasonTheme";
 import { cn } from "@/lib/utils";
@@ -31,8 +33,15 @@ export function MuseumNav({
 }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const { label, themeSkinLabel } = useSeasonTheme();
+  const { themeSkinLabel } = useSeasonTheme();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const [today, setToday] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setToday(new Date());
+  }, []);
+
+  const dailyWord = today ? getDailyTcmForDate(today) : null;
 
   return (
     <div
@@ -94,21 +103,12 @@ export function MuseumNav({
             )}
           >
             <div
-              className="flex w-[min(100%,10.5rem)] shrink-0 flex-col justify-center border-r border-border/60 py-0.5 pr-2.5"
+              className="flex w-[min(100%,13.5rem)] shrink-0 flex-col justify-center border-r border-border/60 py-0.5 pr-2.5"
               title={themeSkinLabel}
             >
-              <p className="text-[9px] font-medium leading-none tracking-[0.16em] text-muted-foreground">
-                功能导览
+              <p className="min-w-0 font-serif text-[11px] leading-snug tracking-[0.05em] text-foreground sm:text-[11.5px]">
+                {dailyWord?.term ?? "载入中…"}
               </p>
-              <div className="mt-1 flex min-w-0 items-center gap-1.5">
-                <MapPinned
-                  className="size-3.5 shrink-0 text-[color-mix(in_srgb,var(--season-accent)_52%,#78716c)] sm:size-4"
-                  aria-hidden
-                />
-                <p className="min-w-0 font-serif text-xs font-medium leading-tight tracking-[0.05em] text-foreground sm:text-[0.8125rem]">
-                  {label}
-                </p>
-              </div>
             </div>
             <nav
               aria-label="首页导览"
