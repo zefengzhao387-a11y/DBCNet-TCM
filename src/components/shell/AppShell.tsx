@@ -15,6 +15,7 @@ import { MuseumMobileDock } from "@/components/museum/MuseumMobileDock";
 import { MuseumNav } from "@/components/museum/MuseumNav";
 
 import { AppWorkspaceDock } from "./AppWorkspaceDock";
+import { ModuleSideRail } from "./ModuleSideRail";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { XaiPanel } from "./XaiPanel";
@@ -160,7 +161,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                         transition={{ duration: 0.34, ease: [0.2, 0.9, 0.2, 1] }}
                         className="relative z-10 px-2 pb-3 sm:px-4 lg:px-6"
                       >
-                        {children}
+                        <div className="flex gap-6">
+                          <ModuleSideRail />
+                          <div className="min-w-0 flex-1">{children}</div>
+                        </div>
                       </motion.div>
                     </AnimatePresence>
                   </div>
